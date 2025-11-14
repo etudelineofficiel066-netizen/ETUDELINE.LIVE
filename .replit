@@ -1,10 +1,10 @@
-modules = ["python-3.11", "postgresql-16"]
+modules = ["python-3.11"]
 [agent]
 expertMode = true
+integrations = ["github:1.0.0"]
 
 [nix]
 channel = "stable-25_05"
-packages = ["cargo", "freetype", "lcms2", "libiconv", "libimagequant", "libjpeg", "libtiff", "libwebp", "libxcrypt", "openjpeg", "rustc", "tcl", "tk", "zlib"]
 
 [workflows]
 runButton = "Project"
@@ -16,10 +16,10 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "fastapi-server"
+args = "etude-line-app"
 
 [[workflows.workflow]]
-name = "fastapi-server"
+name = "etude-line-app"
 author = "agent"
 
 [workflows.workflow.metadata]
@@ -35,13 +35,5 @@ localPort = 5000
 externalPort = 80
 
 [[ports]]
-localPort = 36403
-externalPort = 3001
-
-[[ports]]
-localPort = 40837
+localPort = 42463
 externalPort = 3000
-
-[deployment]
-deploymentTarget = "vm"
-run = ["gunicorn", "main:app", "--workers", "4", "--worker-class", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:5000", "--timeout", "120"]
