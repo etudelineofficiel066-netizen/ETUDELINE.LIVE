@@ -7,7 +7,7 @@
     <link rel="icon" type="image/png" href="/static/favicon.png">
     
     <!-- PWA Meta Tags -->
-    <meta name="theme-color" content="#6366f1">
+    <meta name="theme-color" content="#2563EB">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Étude LINE">
@@ -20,7 +20,7 @@
         :root {
             --primary: #1a1a1a;
             --secondary: #f8fafc;
-            --accent: #6366f1;
+            --accent: #2563EB;
             --success: #10b981;
             --text-primary: #0f172a;
             --text-secondary: #64748b;
@@ -595,7 +595,7 @@
             left: 0;
             right: 0;
             height: 3px;
-            background: linear-gradient(90deg, var(--accent), #8b5cf6, var(--accent));
+            background: linear-gradient(90deg, var(--accent), #3B82F6, var(--accent));
         }
         
         .welcome-card h2 {
@@ -651,7 +651,7 @@
             background: #f8f9fa;
             border-radius: 8px;
             margin-top: 1rem;
-            border-left: 4px solid #7C3AED;
+            border-left: 4px solid #2563EB;
             display: inline-block;
             text-align: left;
         }
@@ -724,14 +724,14 @@
             font-family: 'Georgia', 'Times New Roman', serif;
             letter-spacing: -0.02em;
             line-height: 1.2;
-            background: linear-gradient(135deg, var(--accent), #8b5cf6);
+            background: linear-gradient(135deg, var(--accent), #3B82F6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
         
         .stats-toggle-btn {
-            background: linear-gradient(135deg, var(--accent) 0%, #8b5cf6 100%);
+            background: linear-gradient(135deg, var(--accent) 0%, #3B82F6 100%);
             color: white;
             border: none;
             padding: 0.75rem 1.5rem;
@@ -743,12 +743,12 @@
             align-items: center;
             gap: 0.5rem;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 6px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
         }
         
         .stats-toggle-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 6px 12px rgba(59, 130, 246, 0.4);
         }
         
         .stats-toggle-btn:active {
@@ -855,19 +855,19 @@
         
         .toggle-password:hover {
             color: var(--accent);
-            background: rgba(99, 102, 241, 0.1);
+            background: rgba(37, 99, 235, 0.1);
         }
         
         .form-group input:focus,
         .form-group select:focus {
             outline: none;
             border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
             transform: translateY(-1px);
         }
         
         .btn {
-            background: linear-gradient(135deg, var(--accent), #8b5cf6);
+            background: linear-gradient(135deg, var(--accent), #3B82F6);
             color: white;
             border: none;
             padding: 1rem 2rem;
@@ -895,7 +895,7 @@
         
         .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
         }
         
         .btn:hover::before {
@@ -920,7 +920,7 @@
         }
         
         .prof-item:hover {
-            border-color: #667eea;
+            border-color: #3B82F6;
             transform: translateX(5px);
         }
         
@@ -964,13 +964,13 @@
         }
         
         .tab-btn.active {
-            color: #667eea;
-            border-bottom-color: #667eea;
-            background: rgba(102, 126, 234, 0.1);
+            color: #3B82F6;
+            border-bottom-color: #3B82F6;
+            background: rgba(59, 130, 246, 0.1);
         }
         
         .tab-btn:hover {
-            background: rgba(102, 126, 234, 0.05);
+            background: rgba(59, 130, 246, 0.05);
         }
         
         .tab-content {
@@ -1021,7 +1021,7 @@
         .create-btn {
             width: 100%;
             padding: 0.8rem 1.2rem;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #3B82F6, #1D4ED8);
             color: white;
             border: none;
             border-radius: var(--radius);
@@ -1048,7 +1048,7 @@
         
         .create-btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.5);
         }
         
         .create-btn:hover::before {
@@ -1156,7 +1156,7 @@
         .main-admin-logo {
             text-align: center;
             margin-bottom: 0.5rem;
-            background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+            background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
             padding: 1rem 1rem 0.75rem;
             margin: -1.5rem -1.5rem 1rem -1.5rem;
             border-radius: var(--radius) var(--radius) 0 0;
@@ -1216,7 +1216,7 @@
     <nav class="navbar">
         <h1>🎓 Étude LINE - Administration</h1>
         <div class="user-info">
-            <a href="/logout" style="color: #8b5cf6; font-weight: 600;">Déconnexion</a>
+            <a href="/logout" style="color: #3B82F6; font-weight: 600;">Déconnexion</a>
         </div>
     </nav>
     
@@ -1415,7 +1415,7 @@
         <div class="welcome-card">
             {% if admin.get('is_main_admin') %}
                 <!-- Admin Principal : Section violette en haut -->
-                <div style="background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%); margin: -1.5rem -1.5rem 0 -1.5rem; padding: 1.5rem; border-radius: 12px 12px 0 0; text-align: center; color: white; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);">
+                <div style="background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%); margin: -1.5rem -1.5rem 0 -1.5rem; padding: 1.5rem; border-radius: 12px 12px 0 0; text-align: center; color: white; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);">
                     <h2 style="margin: 0 0 0.5rem 0; color: white; font-size: 1.5rem; font-weight: 600;">Bienvenue, {{ admin.prenom|upper }} {{ admin.nom|upper }}</h2>
                     <p style="margin: 0; color: rgba(255, 255, 255, 0.95); font-weight: 500;"><strong>Rôle:</strong> Administrateur Principal</p>
                 </div>
@@ -1486,7 +1486,7 @@
                         padding: 1.25rem 2rem;
                         border-radius: 12px;
                         margin-top: 1.5rem;
-                        border-left: 4px solid #7C3AED;
+                        border-left: 4px solid #2563EB;
                         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
                         max-width: 500px;
                         margin-left: auto;
@@ -1567,7 +1567,7 @@
             <h3 style="margin-bottom: 0.75rem; color: #333; font-size: 1.1rem; font-weight: 600;">
                 ⚙️ Contrôles des fonctionnalités
                 {% if not admin.get('is_main_admin') and admin_universite %}
-                    <span style="color: #7C3AED; font-weight: 500;">({{ admin_universite.nom }})</span>
+                    <span style="color: #2563EB; font-weight: 500;">({{ admin_universite.nom }})</span>
                 {% endif %}
             </h3>
             
@@ -1578,7 +1578,7 @@
                     🏛️ Sélectionnez une université à gérer:
                 </label>
                 <select id="universite-selector" onchange="loadUniversiteSettings()" 
-                        style="width: 100%; max-width: 400px; padding: 0.75rem; border: 2px solid #8b5cf6; border-radius: 8px; font-size: 1rem; background: white; cursor: pointer;">
+                        style="width: 100%; max-width: 400px; padding: 0.75rem; border: 2px solid #3B82F6; border-radius: 8px; font-size: 1rem; background: white; cursor: pointer;">
                     <option value="">-- Choisir une université --</option>
                     {% for univ in universites %}
                     <option value="{{ univ.id }}">{{ univ.nom }}</option>
@@ -1589,13 +1589,13 @@
             
             <div id="controls-container" style="display: {% if admin.get('is_main_admin') %}none{% else %}flex{% endif %}; gap: 1rem; flex-wrap: wrap;">
                 <!-- Bouton contrôle téléchargements -->
-                <button onclick="toggleTelechargements()" id="download-toggle-btn" class="stats-toggle-btn" style="background: linear-gradient(135deg, #7C3AED 0%, #7C3AED 100%);">
+                <button onclick="toggleTelechargements()" id="download-toggle-btn" class="stats-toggle-btn" style="background: linear-gradient(135deg, #2563EB 0%, #2563EB 100%);">
                     <span id="download-icon">📥</span> Téléchargements
                     <span id="download-status">: Chargement...</span>
                 </button>
                 
                 <!-- Bouton contrôle passage en classe supérieure -->
-                <button onclick="togglePassageClasse()" id="passage-toggle-btn" class="stats-toggle-btn" style="background: linear-gradient(135deg, #7C3AED 0%, #7C3AED 100%);">
+                <button onclick="togglePassageClasse()" id="passage-toggle-btn" class="stats-toggle-btn" style="background: linear-gradient(135deg, #2563EB 0%, #2563EB 100%);">
                     <span id="passage-icon">🎓</span> Passage classe sup.
                     <span id="passage-status">: Chargement...</span>
                 </button>
@@ -1603,7 +1603,7 @@
         </div>
         
         <!-- Statistiques du système (toujours visibles) -->
-        <h3 style="margin: 1.5rem 0 1rem 0; color: #7C3AED; font-size: 1.2rem;">📊 Statistiques universitaires</h3>
+        <h3 style="margin: 1.5rem 0 1rem 0; color: #2563EB; font-size: 1.2rem;">📊 Statistiques universitaires</h3>
         <div class="stats-horizontal-container" id="stats-container">
             <!-- Ligne 1 : Professeurs | Étudiants -->
             <div class="card stat-vertical-card">
@@ -1768,13 +1768,13 @@
                     <div class="prof-list" id="admin-items">
                         {% if admins %}
                             {% for administrator in admins %}
-                            <div class="prof-item academic-item" style="{% if administrator.get('is_main_admin') %}border-left: 4px solid #f39c12; background: linear-gradient(135deg, #fff7e6, #ffeaa7);{% elif administrator.username == admin.username %}border-left: 4px solid #667eea;{% endif %}">
+                            <div class="prof-item academic-item" style="{% if administrator.get('is_main_admin') %}border-left: 4px solid #f39c12; background: linear-gradient(135deg, #fff7e6, #ffeaa7);{% elif administrator.username == admin.username %}border-left: 4px solid #3B82F6;{% endif %}">
                                 <div class="prof-name">
                                     {{ administrator.prenom }} {{ administrator.nom }}
                                     {% if administrator.get('is_main_admin') %}
                                         <span style="background: #f39c12; color: white; padding: 0.2rem 0.5rem; border-radius: 10px; font-size: 0.7rem; margin-left: 0.5rem;">PRINCIPAL</span>
                                     {% elif administrator.username == admin.username %}
-                                        <span style="background: #667eea; color: white; padding: 0.2rem 0.5rem; border-radius: 10px; font-size: 0.7rem; margin-left: 0.5rem;">VOUS</span>
+                                        <span style="background: #3B82F6; color: white; padding: 0.2rem 0.5rem; border-radius: 10px; font-size: 0.7rem; margin-left: 0.5rem;">VOUS</span>
                                     {% endif %}
                                 </div>
                                 <div class="prof-details">
@@ -1867,7 +1867,7 @@
                                     
                                     {% if prof.filieres %}
                                         {% for filiere in prof.filieres %}
-                                            <span class="meta-tag" style="background: #F3E8FF; color: #7C3AED;">📖 {{ filiere.nom }}</span>
+                                            <span class="meta-tag" style="background: #F3E8FF; color: #2563EB;">📖 {{ filiere.nom }}</span>
                                         {% endfor %}
                                     {% endif %}
                                     
@@ -2018,7 +2018,7 @@
                                 
                                 {% if etudiants_ufr|length > 0 %}
                                     <div style="margin-bottom: 2rem; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                                        <div style="background: #667eea; color: white; padding: 0.6rem 1rem; font-weight: 600; font-size: 0.95rem;">
+                                        <div style="background: #3B82F6; color: white; padding: 0.6rem 1rem; font-weight: 600; font-size: 0.95rem;">
                                             🏢 {{ ufr.nom }}
                                             {% for uni in universites %}
                                                 {% if uni.id == ufr.universite_id %}
@@ -2039,8 +2039,8 @@
                                                 <div style="border-bottom: 1px solid #e0e0e0; margin-bottom: 1rem; padding-bottom: 1rem;">
                                                     <div style="background: #F3E8FF; 
                                                         padding: 0.5rem 1rem; font-weight: 600; font-size: 0.9rem;
-                                                        color: #7C3AED; 
-                                                        border-left: 4px solid #7C3AED; cursor: pointer; user-select: none; display: flex; align-items: center; gap: 0.5rem;" 
+                                                        color: #2563EB; 
+                                                        border-left: 4px solid #2563EB; cursor: pointer; user-select: none; display: flex; align-items: center; gap: 0.5rem;" 
                                                         onclick="toggleFiliereEtudiants('filiere-{{ ufr.id }}-{{ filiere.id }}')">
                                                         <span id="arrow-filiere-{{ ufr.id }}-{{ filiere.id }}" style="font-size: 1rem; transition: transform 0.3s;">►</span>
                                                         <span>📚 {{ filiere.nom }} ({{ etudiants_filiere|length }} étudiant{{ 's' if etudiants_filiere|length > 1 else '' }})</span>
@@ -2082,7 +2082,7 @@
                                                                         <div id="details-etudiant-{{ etudiant.username }}" style="display: none;">
                                                                             <div class="prof-details">@{{ etudiant.username }}</div>
                                                                             <div class="prof-meta" style="margin-top: 0.5rem;">
-                                                                                <span class="meta-tag" style="background: #F3E8FF; color: #7C3AED;">📅 {{ etudiant.created_at.strftime('%d/%m/%Y à %H:%M') }}</span>
+                                                                                <span class="meta-tag" style="background: #F3E8FF; color: #2563EB;">📅 {{ etudiant.created_at.strftime('%d/%m/%Y à %H:%M') }}</span>
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -2122,8 +2122,8 @@
                     ➕ Créer une université
                 </button>
                 {% else %}
-                <div style="background: linear-gradient(135deg, #f3e8ff 0%, #ede9fe 100%); border-left: 4px solid #7C3AED; padding: 1rem 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
-                    <p style="margin: 0; color: #7C3AED; font-weight: 500; display: flex; align-items: center; gap: 0.5rem;">
+                <div style="background: linear-gradient(135deg, #f3e8ff 0%, #ede9fe 100%); border-left: 4px solid #2563EB; padding: 1rem 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                    <p style="margin: 0; color: #2563EB; font-weight: 500; display: flex; align-items: center; gap: 0.5rem;">
                         <span style="font-size: 1.2rem;">ℹ️</span>
                         <span>En tant qu'administrateur secondaire, vous ne pouvez pas créer de nouvelles universités. Cette action est réservée à l'administrateur principal.</span>
                     </p>
@@ -2161,7 +2161,7 @@
                                     <button class="btn-edit btn-small" onclick='editUniversite({{ uni.id|tojson }}, {{ uni.nom|tojson }}, {{ uni.code|tojson }})' title="Modifier">
                                         ✏️
                                     </button>
-                                    <button class="btn-small" onclick='uploadLogo({{ uni.id|tojson }}, {{ uni.nom|tojson }})' style="background: #7C3AED; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer; font-size: 0.8rem;" title="Ajouter un logo">
+                                    <button class="btn-small" onclick='uploadLogo({{ uni.id|tojson }}, {{ uni.nom|tojson }})' style="background: #2563EB; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer; font-size: 0.8rem;" title="Ajouter un logo">
                                         📸
                                     </button>
                                     <button class="btn-delete btn-small" onclick='deleteUniversite({{ uni.id|tojson }}, {{ uni.nom|tojson }})' title="Supprimer">
@@ -2339,7 +2339,7 @@
                                     {% endif %}
                                     {% set current_ufr.id = filiere.ufr_id %}
                                     <div class="ufr-group" data-ufr-id="{{ filiere.ufr_id }}">
-                                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 0.75rem 1rem; margin-bottom: 0.5rem; border-radius: 8px; font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem; box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);">
+                                        <div style="background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%); color: white; padding: 0.75rem 1rem; margin-bottom: 0.5rem; border-radius: 8px; font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem; box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);">
                                             <span style="font-size: 1.1rem;">📁</span>
                                             {% for ufr in ufrs %}
                                                 {% if ufr.id == filiere.ufr_id %}
@@ -2348,7 +2348,7 @@
                                             {% endfor %}
                                         </div>
                                 {% endif %}
-                                <div class="academic-item" style="margin-left: 1.5rem; border-left: 3px solid #667eea; padding-left: 1rem;">
+                                <div class="academic-item" style="margin-left: 1.5rem; border-left: 3px solid #3B82F6; padding-left: 1rem;">
                                     <h4>{{ filiere.nom }}</h4>
                                     <div class="academic-code">Code: {{ filiere.code }}</div>
                                     <div class="action-buttons">
@@ -2449,7 +2449,7 @@
                                 
                                 {% if matieres_filiere|length > 0 %}
                                     <div style="margin-bottom: 2rem; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                                        <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 0.6rem 1rem; font-weight: 600; font-size: 0.95rem;">
+                                        <div style="background: linear-gradient(135deg, #3B82F6, #1D4ED8); color: white; padding: 0.6rem 1rem; font-weight: 600; font-size: 0.95rem;">
                                             {{ filiere.nom }}
                                             {% for ufr in ufrs %}
                                                 {% if ufr.id == filiere.ufr_id %}
@@ -2469,11 +2469,11 @@
                                             {% if matieres_niveau|length > 0 %}
                                                 <div style="border-bottom: 1px solid #e0e0e0;">
                                                     <div style="background: linear-gradient(135deg, 
-                                                        {% if niveau == 'L1' %}#7C3AED, #7C3AED
-                                                        {% elif niveau == 'L2' %}#7C3AED, #7C3AED
-                                                        {% elif niveau == 'L3' %}#7C3AED, #7C3AED
-                                                        {% elif niveau == 'M1' %}#7C3AED, #7C3AED
-                                                        {% elif niveau == 'M2' %}#7C3AED, #7C3AED
+                                                        {% if niveau == 'L1' %}#2563EB, #2563EB
+                                                        {% elif niveau == 'L2' %}#2563EB, #2563EB
+                                                        {% elif niveau == 'L3' %}#2563EB, #2563EB
+                                                        {% elif niveau == 'M1' %}#2563EB, #2563EB
+                                                        {% elif niveau == 'M2' %}#2563EB, #2563EB
                                                         {% endif %}); 
                                                         padding: 0.5rem 1rem; font-weight: 600; color: white; cursor: pointer; user-select: none; display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem;"
                                                         onclick="toggleNiveauMatieres('{{ filiere.id }}_{{ niveau }}')">
@@ -2499,7 +2499,7 @@
                                                         
                                                         {% if matieres_semestre|length > 0 %}
                                                             <div style="background: linear-gradient(135deg, 
-                                                                {% if semestre == 'S1' %}#667eea, #764ba2
+                                                                {% if semestre == 'S1' %}#3B82F6, #1D4ED8
                                                                 {% else %}#f093fb, #f5576c
                                                                 {% endif %}); 
                                                                 padding: 0.4rem 1rem 0.4rem 1.5rem; font-weight: 600; color: white; font-size: 0.85rem; cursor: pointer; user-select: none; display: flex; justify-content: space-between; align-items: center;"
@@ -2867,7 +2867,7 @@
             
             if (actif) {
                 statusSpan.textContent = ': Activé ✓';
-                btn.style.background = 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)';
+                btn.style.background = 'linear-gradient(135deg, #3B82F6 0%, #7c3aed 100%)';
             } else {
                 statusSpan.textContent = ': Désactivé ✗';
                 btn.style.background = 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)';
@@ -4128,17 +4128,17 @@
                         : '';
                     
                     html += `
-                        <div class="user-card" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; border-left: 4px solid ${memeFiliere ? '#3b82f6' : '#8b5cf6'};">
+                        <div class="user-card" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; border-left: 4px solid ${memeFiliere ? '#3b82f6' : '#3B82F6'};">
                             <div style="flex: 1;">
                                 <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
                                     ${memeFiliere 
                                         ? `<strong style="color: #3b82f6;">📚 ${passage.filiere_depart}</strong>
                                            <span style="color: #666;">:</span>
-                                           <span style="color: #8b5cf6; font-weight: 600;">${passage.niveau_depart}</span>
+                                           <span style="color: #3B82F6; font-weight: 600;">${passage.niveau_depart}</span>
                                            <span style="margin: 0 0.5rem; color: #3b82f6; font-weight: bold;">→</span>
                                            <span style="color: #16a34a; font-weight: 600;">${passage.niveau_arrivee}</span>
                                            ${badgeMemeFiliere}`
-                                        : `<strong style="color: #8b5cf6;">📚 ${passage.filiere_depart} (${passage.niveau_depart})</strong>
+                                        : `<strong style="color: #3B82F6;">📚 ${passage.filiere_depart} (${passage.niveau_depart})</strong>
                                            <span style="margin: 0 1rem; color: #666;">→</span>
                                            <strong style="color: #16a34a;">📚 ${passage.filiere_arrivee} (${passage.niveau_arrivee})</strong>`
                                     }
@@ -4170,7 +4170,7 @@
                 
                 let html = `
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.75rem; margin-bottom: 1.5rem;">
-                        <div class="stat-card" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); padding: 0.75rem 1rem;">
+                        <div class="stat-card" style="background: linear-gradient(135deg, #3B82F6 0%, #7c3aed 100%); padding: 0.75rem 1rem;">
                             <h3 style="color: white; font-size: 0.9rem; margin-bottom: 0.25rem;">Total passages</h3>
                             <div style="font-size: 1.5rem; font-weight: bold; color: white;">${data.total}</div>
                         </div>

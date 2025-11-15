@@ -7,7 +7,7 @@
     <link rel="icon" type="image/png" href="/static/favicon.png">
     
     <!-- PWA Meta Tags -->
-    <meta name="theme-color" content="#6366f1">
+    <meta name="theme-color" content="#2563EB">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Étude LINE">
@@ -21,7 +21,7 @@
         :root {
             --primary: #1a1a1a;
             --secondary: #f8fafc;
-            --accent: #6366f1;
+            --accent: #2563EB;
             --success: #10b981;
             --text-primary: #0f172a;
             --text-secondary: #64748b;
@@ -313,7 +313,7 @@
             left: 0;
             right: 0;
             height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.3), transparent);
+            background: linear-gradient(90deg, transparent, rgba(37, 99, 235, 0.3), transparent);
         }
         
         .header {
@@ -380,7 +380,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), transparent);
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), transparent);
             opacity: 0;
             transition: opacity 0.3s ease;
         }
@@ -458,21 +458,21 @@
         
         .toggle-password:hover {
             color: var(--accent);
-            background: rgba(99, 102, 241, 0.1);
+            background: rgba(37, 99, 235, 0.1);
         }
         
         .form-group input:focus,
         .form-group select:focus {
             outline: none;
             border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
             transform: translateY(-1px);
         }
         
         .btn {
             width: 100%;
             padding: 16px 24px;
-            background: linear-gradient(135deg, var(--accent), #8b5cf6);
+            background: linear-gradient(135deg, var(--accent), #3B82F6);
             color: white;
             border: none;
             border-radius: var(--radius);
@@ -499,7 +499,7 @@
         
         .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
         }
         
         .btn:hover::before {
@@ -520,7 +520,7 @@
         /* Bouton Se connecter - taille augmentée */
         .login-btn {
             padding: 1rem 2.5rem;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #3B82F6, #1D4ED8);
             color: white !important;
             border-radius: 8px;
             text-decoration: none;
@@ -528,14 +528,14 @@
             font-weight: 600;
             display: inline-block;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 6px rgba(102, 126, 234, 0.2);
+            box-shadow: 0 4px 6px rgba(59, 130, 246, 0.2);
             font-family: 'Inter', sans-serif;
             letter-spacing: 0.01em;
         }
         
         .login-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 15px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 8px 15px rgba(59, 130, 246, 0.3);
         }
         
         .login-btn:active {
@@ -635,7 +635,7 @@
                     <p style="text-align: center; color: var(--text-secondary); margin-bottom: 24px; font-size: 1.05rem;">
                         Accédez à tous les cours, exercices et solutions de votre filière
                     </p>
-                    <button onclick="toggleInscription()" class="btn" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+                    <button onclick="toggleInscription()" class="btn" style="background: linear-gradient(135deg, #3B82F6, #1D4ED8);">
                         📝 S'inscrire
                     </button>
                 </div>
@@ -851,26 +851,26 @@
     </footer>
     
     <!-- Bannière d'installation PWA (Android/Desktop) -->
-    <div id="pwa-install-banner" style="display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px 30px; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); z-index: 10000; max-width: 500px; width: 90%; animation: slideUp 0.5s ease;">
+    <div id="pwa-install-banner" style="display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%); color: white; padding: 20px 30px; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); z-index: 10000; max-width: 500px; width: 90%; animation: slideUp 0.5s ease;">
         <button onclick="closePWABanner()" style="position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.2); border: none; color: white; font-size: 1.3rem; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s;">✕</button>
         <div style="text-align: center;">
             <div style="font-size: 2.5rem; margin-bottom: 10px;">📲</div>
             <h3 style="margin: 0 0 10px 0; font-size: 1.2rem; font-weight: 600;">Installer Étude LINE</h3>
             <p style="margin: 0 0 15px 0; font-size: 0.95rem; opacity: 0.95;">Ajoutez l'application à votre écran d'accueil pour un accès rapide !</p>
-            <button onclick="installPWA()" style="background: white; color: #667eea; border: none; padding: 12px 30px; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
+            <button onclick="installPWA()" style="background: white; color: #3B82F6; border: none; padding: 12px 30px; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
                 🚀 Installer maintenant
             </button>
         </div>
     </div>
     
     <!-- Bannière d'installation PWA pour iOS (Bouton) -->
-    <div id="ios-install-banner" style="display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px 30px; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); z-index: 10000; max-width: 500px; width: 90%; animation: slideUp 0.5s ease;">
+    <div id="ios-install-banner" style="display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%); color: white; padding: 20px 30px; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); z-index: 10000; max-width: 500px; width: 90%; animation: slideUp 0.5s ease;">
         <button onclick="closeIOSBanner()" style="position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.2); border: none; color: white; font-size: 1.3rem; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s;">✕</button>
         <div style="text-align: center;">
             <div style="font-size: 2.5rem; margin-bottom: 10px;">📱</div>
             <h3 style="margin: 0 0 10px 0; font-size: 1.2rem; font-weight: 600;">Installer Étude LINE</h3>
             <p style="margin: 0 0 15px 0; font-size: 0.95rem; opacity: 0.95;">Ajoutez l'application à votre écran d'accueil pour un accès rapide !</p>
-            <button onclick="showIOSInstructions()" style="background: white; color: #667eea; border: none; padding: 12px 30px; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
+            <button onclick="showIOSInstructions()" style="background: white; color: #3B82F6; border: none; padding: 12px 30px; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
                 🚀 Installer maintenant
             </button>
         </div>
@@ -879,7 +879,7 @@
     <!-- Modale d'instructions iOS -->
     <div id="ios-instructions-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10001; align-items: center; justify-content: center; animation: fadeIn 0.3s ease;">
         <div style="background: white; border-radius: 20px; max-width: 450px; width: 90%; max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.4); animation: slideUpModal 0.3s ease;">
-            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 25px; border-radius: 20px 20px 0 0; position: relative;">
+            <div style="background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%); color: white; padding: 25px; border-radius: 20px 20px 0 0; position: relative;">
                 <button onclick="closeIOSInstructions()" style="position: absolute; top: 15px; right: 15px; background: rgba(255,255,255,0.2); border: none; color: white; font-size: 1.5rem; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s;">✕</button>
                 <div style="text-align: center;">
                     <div style="font-size: 3rem; margin-bottom: 10px;">📱</div>
@@ -890,12 +890,12 @@
                 <p style="margin: 0 0 25px 0; font-size: 1rem; color: #666; text-align: center;">Suivez ces étapes pour installer l'application :</p>
                 
                 <!-- Instructions Safari -->
-                    <div style="background: #f8f9fa; padding: 20px; border-radius: 12px; margin-bottom: 15px; border-left: 4px solid #667eea;">
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 12px; margin-bottom: 15px; border-left: 4px solid #3B82F6;">
                         <div style="display: flex; align-items: start; gap: 15px;">
-                            <div style="background: #667eea; color: white; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0;">1</div>
+                            <div style="background: #3B82F6; color: white; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0;">1</div>
                             <div>
                                 <p style="margin: 0 0 8px 0; font-weight: 600; color: #333;">Ouvrir le menu Partage</p>
-                                <p style="margin: 0; font-size: 0.95rem; line-height: 1.5; color: #666;">Appuyez sur le bouton <strong style="background: #e8eaf6; color: #667eea; padding: 3px 10px; border-radius: 6px; white-space: nowrap;">Partage <span style="font-size: 1.2rem;">⬆️</span></strong> tout en bas de votre navigateur Safari (dans la barre du bas, pas sur la page web)</p>
+                                <p style="margin: 0; font-size: 0.95rem; line-height: 1.5; color: #666;">Appuyez sur le bouton <strong style="background: #e8eaf6; color: #3B82F6; padding: 3px 10px; border-radius: 6px; white-space: nowrap;">Partage <span style="font-size: 1.2rem;">⬆️</span></strong> tout en bas de votre navigateur Safari (dans la barre du bas, pas sur la page web)</p>
                             </div>
                         </div>
                     </div>
@@ -910,18 +910,18 @@
                         </div>
                     </div>
                     
-                    <div style="background: #f8f9fa; padding: 20px; border-radius: 12px; border-left: 4px solid #764ba2;">
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 12px; border-left: 4px solid #1D4ED8;">
                         <div style="display: flex; align-items: start; gap: 15px;">
-                            <div style="background: #764ba2; color: white; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0;">3</div>
+                            <div style="background: #1D4ED8; color: white; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0;">3</div>
                             <div>
                                 <p style="margin: 0 0 8px 0; font-weight: 600; color: #333;">Ajouter à l'écran d'accueil</p>
-                                <p style="margin: 0; font-size: 0.95rem; line-height: 1.5; color: #666;">Dans le menu, sélectionnez l'option <strong style="background: #e8eaf6; color: #764ba2; padding: 3px 10px; border-radius: 6px; white-space: nowrap;">Sur l'écran d'accueil <span style="font-size: 1.2rem;">➕</span></strong> puis appuyez sur <strong>"Ajouter"</strong> en haut à droite</p>
+                                <p style="margin: 0; font-size: 0.95rem; line-height: 1.5; color: #666;">Dans le menu, sélectionnez l'option <strong style="background: #e8eaf6; color: #1D4ED8; padding: 3px 10px; border-radius: 6px; white-space: nowrap;">Sur l'écran d'accueil <span style="font-size: 1.2rem;">➕</span></strong> puis appuyez sur <strong>"Ajouter"</strong> en haut à droite</p>
                             </div>
                         </div>
                     </div>
                 
                 <div style="margin-top: 25px; text-align: center;">
-                    <button onclick="closeIOSInstructions()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 12px 35px; border-radius: 10px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);">
+                    <button onclick="closeIOSInstructions()" style="background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%); color: white; border: none; padding: 12px 35px; border-radius: 10px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);">
                         J'ai compris
                     </button>
                 </div>
