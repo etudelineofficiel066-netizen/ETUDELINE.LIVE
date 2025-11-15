@@ -18,7 +18,7 @@ from sqlalchemy import and_, or_, text
 import uvicorn
 
 # Import database and models
-from database import get_db, create_tables
+from database import get_db, create_tables, SessionLocal
 from models import (
     Universite as UniversiteDB, UFR as UFRDB, Filiere as FiliereDB, Matiere as MatiereDB,
     Administrateur as AdministrateurDB, Professeur as ProfesseurDB, Etudiant as EtudiantDB, 
@@ -83,6 +83,13 @@ async def startup_event():
     try:
         create_tables()
         print("✅ Tables de base de données vérifiées")
+        
+        # Créer l'administrateur principal si nécessaire
+        db = SessionLocal()
+        try:
+            create_default_admin_if_needed(db)
+        finally:
+            db.close()
     except Exception as e:
         print(f"⚠️ Erreur création tables (peut être ignorée si elles existent): {e}")
 # Configuration from environment variables
