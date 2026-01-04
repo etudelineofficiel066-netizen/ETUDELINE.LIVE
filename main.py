@@ -169,14 +169,17 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 # Database helper functions (PostgreSQL)
 def create_default_admin_if_needed(db: Session) -> None:
-    """Create default admin if none exists"""
-    # Utiliser variables d'environnement pour sécurité
-    admin_username = os.getenv("ADMIN_USERNAME", "admin_default")
-    admin_password = os.getenv("ADMIN_PASSWORD", "ChangeMeNow2024!")
+    """Create default admin if none exists using environment variables"""
+    admin_username = os.getenv("ADMIN_USERNAME")
+    admin_password = os.getenv("ADMIN_PASSWORD")
+    
+    if not admin_username or not admin_password:
+        print("⚠️ ADMIN_USERNAME ou ADMIN_PASSWORD non configurés. Saut de la création de l'admin.")
+        return
     
     existing_admin = db.query(AdministrateurDB).filter_by(username=admin_username).first()
     if not existing_admin:
-        print("👑 Création de l'administrateur principal par défaut...")
+        print(f"👑 Création de l'administrateur principal : {admin_username}")
         default_admin = AdministrateurDB(
             username=admin_username,
             password_hash=hash_password(admin_password),
@@ -187,10 +190,13 @@ def create_default_admin_if_needed(db: Session) -> None:
         db.add(default_admin)
         db.commit()
         print(f"✅ Administrateur principal créé avec succès ({admin_username})")
-        if admin_password == "ChangeMeNow2024!":
-            print("⚠️  ATTENTION : Utilisez des credentials personnalisés via variables d'environnement ADMIN_USERNAME et ADMIN_PASSWORD")
     else:
-        print(f"✅ Administrateur principal déjà présent ({admin_username})")
+        # Optionnel: Mettre à jour le mot de passe si les variables d'environnement changent
+        if not verify_password(admin_password, existing_admin.password_hash):
+             print(f"🔄 Mise à jour du mot de passe pour l'administrateur : {admin_username}")
+             existing_admin.password_hash = hash_password(admin_password)
+             db.commit()
+        print(f"✅ Administrateur principal vérifié ({admin_username})")
 
 def authenticate_user(db: Session, username: str, password: str) -> Optional[Tuple[str, Dict[str, Any]]]:
     """Authenticate user against PostgreSQL database"""
