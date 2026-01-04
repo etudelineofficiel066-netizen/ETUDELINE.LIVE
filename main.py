@@ -85,8 +85,15 @@ async def startup_event():
     try:
         create_tables()
         print("✅ Tables de base de données vérifiées")
+        # Forcer la création de l'admin au démarrage
+        from database import SessionLocal
+        db = SessionLocal()
+        try:
+            create_default_admin_if_needed(db)
+        finally:
+            db.close()
     except Exception as e:
-        print(f"⚠️ Erreur création tables (peut être ignorée si elles existent): {e}")
+        print(f"⚠️ Erreur création tables ou admin: {e}")
     
     # Reprogrammer les notifications pour les cours programmés au redémarrage
     try:
