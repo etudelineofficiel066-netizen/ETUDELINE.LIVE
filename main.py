@@ -2048,7 +2048,6 @@ MAX_PROOF_SIZE = 5 * 1024 * 1024  # 5 MB
 @app.post("/payments/request")
 async def submit_payment_request(
     request: Request,
-    payment_method: str = Form(...),
     proof_image: UploadFile = File(...),
     db: Session = Depends(get_db),
 ):
@@ -2058,8 +2057,7 @@ async def submit_payment_request(
     if not etudiant:
         raise HTTPException(status_code=404, detail="Étudiant introuvable")
 
-    if payment_method not in ("orange", "wave"):
-        raise HTTPException(status_code=400, detail="Méthode de paiement invalide")
+    payment_method = "wave"
 
     # Vérifier qu'il n'a pas déjà une demande en attente
     existing = db.query(PaymentRequestDB).filter(

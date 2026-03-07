@@ -787,33 +787,9 @@
                     <!-- Body modal -->
                     <div style="padding:1.75rem 2rem;">
                         <form action="/payments/request" method="post" enctype="multipart/form-data" id="payment-form">
-                            <!-- Étape 1 : Méthode -->
+                            <!-- Étape 1 : Numéro à payer -->
                             <div style="margin-bottom:1.25rem;">
-                                <p style="font-weight:700; color:#111827; margin:0 0 0.6rem; font-size:0.95rem;">1. Choisissez votre méthode de paiement</p>
-                                <div id="method-error" style="display:none; color:#dc2626; font-size:0.82rem; margin-bottom:0.5rem; padding:0.4rem 0.75rem; background:#fef2f2; border-radius:8px; border:1px solid #fecaca;">
-                                    Veuillez sélectionner une méthode de paiement.
-                                </div>
-                                <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
-                                    <label style="cursor:pointer;">
-                                        <input type="radio" name="payment_method" value="orange" style="display:none;" onchange="selectMethod('orange')">
-                                        <div id="btn-orange" style="border:2px solid #e5e7eb; border-radius:12px; padding:0.85rem 0.5rem; text-align:center; transition:all 0.2s; background:white;">
-                                            <div style="font-size:1.6rem; margin-bottom:0.25rem;">🟠</div>
-                                            <strong style="font-size:0.85rem; color:#374151;">Orange Money</strong>
-                                        </div>
-                                    </label>
-                                    <label style="cursor:pointer;">
-                                        <input type="radio" name="payment_method" value="wave" style="display:none;" onchange="selectMethod('wave')">
-                                        <div id="btn-wave" style="border:2px solid #e5e7eb; border-radius:12px; padding:0.85rem 0.5rem; text-align:center; transition:all 0.2s; background:white;">
-                                            <div style="font-size:1.6rem; margin-bottom:0.25rem;">🔵</div>
-                                            <strong style="font-size:0.85rem; color:#374151;">Wave</strong>
-                                        </div>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <!-- Étape 2 : Numéro à payer -->
-                            <div style="margin-bottom:1.25rem;">
-                                <p style="font-weight:700; color:#111827; margin:0 0 0.6rem; font-size:0.95rem;">2. Envoyez le paiement à ce numéro</p>
+                                <p style="font-weight:700; color:#111827; margin:0 0 0.6rem; font-size:0.95rem;">1. Envoyez le paiement à ce numéro</p>
                                 <div style="background:linear-gradient(135deg,#f5f3ff,#eef2ff); border:2px solid #c4b5fd; border-radius:14px; padding:1rem 1.25rem; text-align:center;">
                                     <p style="margin:0 0 0.2rem; color:#6b7280; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em;">Numéro de paiement</p>
                                     <p style="margin:0 0 0.2rem; font-size:1.8rem; font-weight:800; color:#7C3AED; letter-spacing:0.05em;">77 577 14 43</p>
@@ -821,9 +797,9 @@
                                 </div>
                             </div>
 
-                            <!-- Étape 3 : Upload preuve -->
+                            <!-- Étape 2 : Upload preuve -->
                             <div style="margin-bottom:1.5rem;">
-                                <p style="font-weight:700; color:#111827; margin:0 0 0.6rem; font-size:0.95rem;">3. Joignez la capture d'écran du paiement</p>
+                                <p style="font-weight:700; color:#111827; margin:0 0 0.6rem; font-size:0.95rem;">2. Joignez la capture d'écran du paiement</p>
                                 <div id="file-error" style="display:none; color:#dc2626; font-size:0.82rem; margin-bottom:0.5rem; padding:0.4rem 0.75rem; background:#fef2f2; border-radius:8px; border:1px solid #fecaca;">
                                     Veuillez joindre une capture d'écran du paiement.
                                 </div>
@@ -863,19 +839,6 @@
                 document.getElementById('modal-payment').addEventListener('click', function(e) {
                     if (e.target === this) closePaymentModal();
                 });
-                function selectMethod(method) {
-                    ['orange','wave'].forEach(m => {
-                        const el = document.getElementById('btn-'+m);
-                        el.style.border = '2px solid #e5e7eb';
-                        el.style.background = 'white';
-                        el.style.boxShadow = 'none';
-                    });
-                    const el = document.getElementById('btn-'+method);
-                    el.style.border = '2px solid #7C3AED';
-                    el.style.background = '#f5f3ff';
-                    el.style.boxShadow = '0 0 0 3px rgba(124,58,237,0.15)';
-                    document.getElementById('method-error').style.display = 'none';
-                }
                 function previewProof(input) {
                     const preview = document.getElementById('proof-preview');
                     const placeholder = document.getElementById('upload-placeholder');
@@ -894,20 +857,11 @@
                     }
                 }
                 function submitPaymentForm() {
-                    const form = document.getElementById('payment-form');
-                    const methodSelected = form.querySelector('input[name="payment_method"]:checked');
                     const fileInput = document.getElementById('proof-file-input');
-                    let valid = true;
-
-                    if (!methodSelected) {
-                        document.getElementById('method-error').style.display = 'block';
-                        valid = false;
-                    }
                     if (!fileInput.files || fileInput.files.length === 0) {
                         document.getElementById('file-error').style.display = 'block';
-                        valid = false;
+                        return;
                     }
-                    if (!valid) return;
 
                     const btn = document.getElementById('submit-payment-btn');
                     btn.disabled = true;
