@@ -433,37 +433,89 @@
             <!-- Onglet Exercices -->
             <div id="tab-exercices" class="tab-content">
                 <div class="section-title">✏️ Exercices</div>
-                {% if chapitre.exercice_texte or chapitre.exercice_fichier_nom %}
-                    {% if chapitre.exercice_texte %}
-                        <div class="content-text">{{ chapitre.exercice_texte | safe }}</div>
-                    {% endif %}
-                    {% if chapitre.exercice_fichier_nom %}
-                        {% set fichier_noms = chapitre.exercice_fichier_nom.split('|||') %}
-                        {% set fichier_paths = chapitre.exercice_fichier_path.split('|||') %}
-                        {% for i in range(fichier_noms|length) %}
-                        <div class="file-container" style="margin-bottom: 12px; padding: 10px; background: #fffde7; border-radius: 8px; border: 2px solid #fff176;">
-                            <div class="file-name" style="color: #f57c00; font-weight: 600; margin-bottom: 8px; font-size: 0.9rem;">
-                                📎 {{ fichier_noms[i] }}
-                            </div>
-                            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                                <a href="/lecteur/{{ fichier_paths[i] }}" 
-                                   style="background: #ff9800; color: white; padding: 6px 14px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 6px; transition: all 0.3s;">
-                                    👁️ Lire
-                                </a>
-                                <a href="/files/download/{{ fichier_paths[i] }}" 
-                                   class="download-button"
-                                   style="background: #e65100; color: white; padding: 6px 14px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 6px; transition: all 0.3s;">
-                                    ⬇️ Télécharger
-                                </a>
-                            </div>
+
+                {% if user_type == "etudiant" and not subscription_active %}
+                    <!-- Barrière Premium Exercices -->
+                    <div class="premium-wall">
+                        <div class="premium-lock-icon">🔒</div>
+                        <div class="premium-badge">ACCÈS PREMIUM</div>
+                        <h3 class="premium-title">Exercices & Solutions réservés aux abonnés</h3>
+                        <p class="premium-desc">Accédez à tous les exercices et leurs corrections détaillées pour progresser efficacement.</p>
+                        <div class="premium-price-box">
+                            <span class="premium-price">1 000 FCFA</span>
+                            <span class="premium-period">/ an</span>
                         </div>
-                        {% endfor %}
-                    {% endif %}
-                {% else %}
-                    <div class="no-content">
-                        <div class="no-content-icon">✏️</div>
-                        <p>Aucun exercice disponible pour ce chapitre</p>
+                        <div class="premium-features">
+                            <div class="premium-feature">✏️ Tous les exercices</div>
+                            <div class="premium-feature">✅ Toutes les solutions</div>
+                            <div class="premium-feature">📚 Accès illimité 1 an</div>
+                        </div>
+
+                        {% if has_pending_payment %}
+                            <div class="premium-status pending">
+                                <span class="status-dot pending"></span>
+                                <div>
+                                    <strong>Paiement en cours de vérification</strong>
+                                    <p>L'administrateur traitera votre demande sous peu.</p>
+                                </div>
+                            </div>
+                        {% elif last_payment_status == "rejected" %}
+                            <div class="premium-status rejected">
+                                <span class="status-dot rejected"></span>
+                                <div>
+                                    <strong>Demande refusée</strong>
+                                    <p>Vous pouvez soumettre une nouvelle demande de paiement.</p>
+                                </div>
+                            </div>
+                            <button onclick="openPaymentModal()" class="premium-btn">
+                                💳 Souscrire maintenant
+                            </button>
+                        {% else %}
+                            <button onclick="openPaymentModal()" class="premium-btn">
+                                💳 Souscrire maintenant
+                            </button>
+                        {% endif %}
+                        <p class="premium-secure">Paiement sécurisé via Orange Money ou Wave</p>
                     </div>
+
+                {% else %}
+                    {% if subscription_active and subscription_expires %}
+                        <div class="subscription-badge">
+                            🟢 <strong>Abonnement actif</strong> — expire le {{ subscription_expires[:10] if subscription_expires else '' }}
+                        </div>
+                    {% endif %}
+                    {% if chapitre.exercice_texte or chapitre.exercice_fichier_nom %}
+                        {% if chapitre.exercice_texte %}
+                            <div class="content-text">{{ chapitre.exercice_texte | safe }}</div>
+                        {% endif %}
+                        {% if chapitre.exercice_fichier_nom %}
+                            {% set fichier_noms = chapitre.exercice_fichier_nom.split('|||') %}
+                            {% set fichier_paths = chapitre.exercice_fichier_path.split('|||') %}
+                            {% for i in range(fichier_noms|length) %}
+                            <div class="file-container" style="margin-bottom: 12px; padding: 10px; background: #fffde7; border-radius: 8px; border: 2px solid #fff176;">
+                                <div class="file-name" style="color: #f57c00; font-weight: 600; margin-bottom: 8px; font-size: 0.9rem;">
+                                    📎 {{ fichier_noms[i] }}
+                                </div>
+                                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                    <a href="/lecteur/{{ fichier_paths[i] }}" 
+                                       style="background: #ff9800; color: white; padding: 6px 14px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 6px; transition: all 0.3s;">
+                                        👁️ Lire
+                                    </a>
+                                    <a href="/files/download/{{ fichier_paths[i] }}" 
+                                       class="download-button"
+                                       style="background: #e65100; color: white; padding: 6px 14px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 6px; transition: all 0.3s;">
+                                        ⬇️ Télécharger
+                                    </a>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% else %}
+                        <div class="no-content">
+                            <div class="no-content-icon">✏️</div>
+                            <p>Aucun exercice disponible pour ce chapitre</p>
+                        </div>
+                    {% endif %}
                 {% endif %}
             </div>
 
@@ -472,119 +524,52 @@
                 <div class="section-title">✅ Solutions</div>
 
                 {% if user_type == "etudiant" and not subscription_active %}
-                    <!-- Barrière Premium -->
-                    <div style="text-align:center; padding:2.5rem 1.5rem; border:2px dashed #c084fc; border-radius:16px; background:linear-gradient(135deg,#faf5ff 0%,#f0f9ff 100%); margin-top:1rem;">
-                        <div style="font-size:2.5rem; margin-bottom:0.75rem;">🔒</div>
-                        <h3 style="color:#7C3AED; margin:0 0 0.5rem; font-size:1.3rem;">Accès Premium</h3>
-                        <p style="color:#6b7280; margin:0 0 0.25rem; font-size:0.95rem;">Abonnement annuel pour accéder aux solutions</p>
-                        <p style="color:#7C3AED; font-weight:700; font-size:1.4rem; margin:0.5rem 0 1.25rem;">1 000 FCFA / an</p>
+                    <!-- Barrière Premium Solutions -->
+                    <div class="premium-wall">
+                        <div class="premium-lock-icon">🔒</div>
+                        <div class="premium-badge">ACCÈS PREMIUM</div>
+                        <h3 class="premium-title">Exercices & Solutions réservés aux abonnés</h3>
+                        <p class="premium-desc">Accédez à toutes les corrections détaillées pour vérifier votre travail et comprendre chaque étape.</p>
+                        <div class="premium-price-box">
+                            <span class="premium-price">1 000 FCFA</span>
+                            <span class="premium-period">/ an</span>
+                        </div>
+                        <div class="premium-features">
+                            <div class="premium-feature">✏️ Tous les exercices</div>
+                            <div class="premium-feature">✅ Toutes les solutions</div>
+                            <div class="premium-feature">📚 Accès illimité 1 an</div>
+                        </div>
 
                         {% if has_pending_payment %}
-                            <div style="background:#fefce8; border:1px solid #fbbf24; border-radius:10px; padding:0.85rem 1.25rem; display:inline-block; margin-bottom:1rem;">
-                                🟡 <strong>Demande en attente de validation</strong><br>
-                                <small style="color:#92400e;">L'administrateur va vérifier votre paiement sous peu.</small>
+                            <div class="premium-status pending">
+                                <span class="status-dot pending"></span>
+                                <div>
+                                    <strong>Paiement en cours de vérification</strong>
+                                    <p>L'administrateur traitera votre demande sous peu.</p>
+                                </div>
                             </div>
                         {% elif last_payment_status == "rejected" %}
-                            <div style="background:#fef2f2; border:1px solid #fca5a5; border-radius:10px; padding:0.85rem 1.25rem; display:inline-block; margin-bottom:1rem;">
-                                🔴 <strong>Demande refusée</strong><br>
-                                <small style="color:#991b1b;">Vous pouvez soumettre une nouvelle demande.</small>
+                            <div class="premium-status rejected">
+                                <span class="status-dot rejected"></span>
+                                <div>
+                                    <strong>Demande refusée</strong>
+                                    <p>Vous pouvez soumettre une nouvelle demande de paiement.</p>
+                                </div>
                             </div>
-                            <br>
-                            <button onclick="document.getElementById('modal-payment').style.display='flex'" 
-                                    style="background:linear-gradient(135deg,#7C3AED,#6366f1); color:white; border:none; padding:0.75rem 2rem; border-radius:10px; font-size:1rem; font-weight:700; cursor:pointer; box-shadow:0 4px 14px rgba(124,58,237,0.35);">
-                                Payer maintenant
+                            <button onclick="openPaymentModal()" class="premium-btn">
+                                💳 Souscrire maintenant
                             </button>
                         {% else %}
-                            <button onclick="document.getElementById('modal-payment').style.display='flex'" 
-                                    style="background:linear-gradient(135deg,#7C3AED,#6366f1); color:white; border:none; padding:0.75rem 2rem; border-radius:10px; font-size:1rem; font-weight:700; cursor:pointer; box-shadow:0 4px 14px rgba(124,58,237,0.35);">
-                                Payer maintenant
+                            <button onclick="openPaymentModal()" class="premium-btn">
+                                💳 Souscrire maintenant
                             </button>
                         {% endif %}
-
-                        <p style="color:#9ca3af; font-size:0.8rem; margin-top:1rem;">Paiement sécurisé via Orange Money ou Wave</p>
+                        <p class="premium-secure">Paiement sécurisé via Orange Money ou Wave</p>
                     </div>
-
-                    <!-- Modal Paiement -->
-                    <div id="modal-payment" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:9999; align-items:center; justify-content:center; padding:1rem;">
-                        <div style="background:white; border-radius:16px; padding:2rem; max-width:460px; width:100%; position:relative; box-shadow:0 20px 50px rgba(0,0,0,0.3);">
-                            <button onclick="document.getElementById('modal-payment').style.display='none'" 
-                                    style="position:absolute; top:12px; right:16px; background:none; border:none; font-size:1.4rem; cursor:pointer; color:#666;">✕</button>
-
-                            <h3 style="color:#7C3AED; margin:0 0 1.25rem; text-align:center;">💳 Paiement Abonnement Premium</h3>
-
-                            <form action="/payments/request" method="post" enctype="multipart/form-data" id="payment-form">
-                                <!-- Choix méthode -->
-                                <p style="font-weight:600; color:#374151; margin-bottom:0.5rem;">Choisissez votre méthode de paiement :</p>
-                                <div style="display:flex; gap:1rem; margin-bottom:1.25rem;">
-                                    <label style="flex:1; cursor:pointer;">
-                                        <input type="radio" name="payment_method" value="orange" required style="display:none;" onchange="selectMethod('orange')">
-                                        <div id="btn-orange" style="border:2px solid #e5e7eb; border-radius:10px; padding:0.75rem; text-align:center; transition:all 0.2s;">
-                                            🟠<br><strong>Orange Money</strong>
-                                        </div>
-                                    </label>
-                                    <label style="flex:1; cursor:pointer;">
-                                        <input type="radio" name="payment_method" value="wave" required style="display:none;" onchange="selectMethod('wave')">
-                                        <div id="btn-wave" style="border:2px solid #e5e7eb; border-radius:10px; padding:0.75rem; text-align:center; transition:all 0.2s;">
-                                            🔵<br><strong>Wave</strong>
-                                        </div>
-                                    </label>
-                                </div>
-
-                                <!-- Instructions de paiement -->
-                                <div style="background:#f3f4f6; border-radius:10px; padding:1rem; margin-bottom:1.25rem; text-align:center;">
-                                    <p style="margin:0 0 0.25rem; color:#374151; font-size:0.9rem;">Envoyez <strong>1 000 FCFA</strong> au :</p>
-                                    <p style="margin:0 0 0.25rem; font-size:1.3rem; font-weight:700; color:#111;">775 77 14 43</p>
-                                    <p style="margin:0; color:#6b7280; font-size:0.85rem;">Nom : <strong>ELN Technologies</strong></p>
-                                </div>
-
-                                <!-- Upload preuve -->
-                                <p style="font-weight:600; color:#374151; margin-bottom:0.5rem;">Capture d'écran de la confirmation :</p>
-                                <input type="file" name="proof_image" accept="image/*" required
-                                       style="width:100%; border:2px dashed #c084fc; border-radius:8px; padding:0.5rem; font-size:0.9rem; cursor:pointer; box-sizing:border-box;"
-                                       onchange="previewProof(this)">
-                                <div id="proof-preview" style="margin-top:0.5rem; display:none;">
-                                    <img id="proof-img-preview" style="max-width:100%; border-radius:8px; max-height:200px; object-fit:contain;">
-                                </div>
-                                <p style="color:#9ca3af; font-size:0.75rem; margin:0.4rem 0 1.25rem;">Formats acceptés : JPG, PNG, WEBP — Max 5 Mo</p>
-
-                                <button type="submit" id="submit-payment-btn"
-                                        style="width:100%; background:linear-gradient(135deg,#7C3AED,#6366f1); color:white; border:none; padding:0.85rem; border-radius:10px; font-size:1rem; font-weight:700; cursor:pointer;">
-                                    📤 Envoyer ma demande
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-
-                    <script>
-                        function selectMethod(method) {
-                            ['orange','wave'].forEach(m => {
-                                document.getElementById('btn-'+m).style.border = '2px solid #e5e7eb';
-                                document.getElementById('btn-'+m).style.background = 'white';
-                                document.getElementById('btn-'+m).style.color = '#111';
-                            });
-                            const el = document.getElementById('btn-'+method);
-                            el.style.border = '2px solid #7C3AED';
-                            el.style.background = '#f5f3ff';
-                        }
-                        function previewProof(input) {
-                            const preview = document.getElementById('proof-preview');
-                            const img = document.getElementById('proof-img-preview');
-                            if (input.files && input.files[0]) {
-                                const reader = new FileReader();
-                                reader.onload = e => { img.src = e.target.result; preview.style.display = 'block'; };
-                                reader.readAsDataURL(input.files[0]);
-                            }
-                        }
-                        document.getElementById('payment-form').addEventListener('submit', function() {
-                            document.getElementById('submit-payment-btn').disabled = true;
-                            document.getElementById('submit-payment-btn').textContent = 'Envoi en cours...';
-                        });
-                    </script>
 
                 {% else %}
-                    <!-- Accès autorisé aux solutions -->
                     {% if subscription_active and subscription_expires %}
-                        <div style="background:#f0fdf4; border:1px solid #86efac; border-radius:8px; padding:0.6rem 1rem; margin-bottom:1rem; font-size:0.85rem; color:#166534; display:inline-block;">
+                        <div class="subscription-badge">
                             🟢 <strong>Abonnement actif</strong> — expire le {{ subscription_expires[:10] if subscription_expires else '' }}
                         </div>
                     {% endif %}
@@ -623,6 +608,125 @@
                     {% endif %}
                 {% endif %}
             </div>
+
+            <!-- Modal Paiement Premium (partagé Exercices + Solutions) -->
+            <div id="modal-payment" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.65); z-index:9999; align-items:center; justify-content:center; padding:1rem;">
+                <div style="background:white; border-radius:20px; padding:0; max-width:480px; width:100%; position:relative; box-shadow:0 25px 60px rgba(0,0,0,0.35); overflow:hidden;">
+                    <!-- Header modal -->
+                    <div style="background:linear-gradient(135deg,#7C3AED 0%,#6366f1 100%); padding:1.5rem 2rem; color:white; text-align:center;">
+                        <button onclick="closePaymentModal()"
+                                style="position:absolute; top:12px; right:16px; background:rgba(255,255,255,0.2); border:none; color:white; font-size:1.1rem; cursor:pointer; width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center;">✕</button>
+                        <div style="font-size:2rem; margin-bottom:0.4rem;">💳</div>
+                        <h3 style="margin:0; font-size:1.2rem; font-weight:700;">Abonnement Premium</h3>
+                        <p style="margin:0.3rem 0 0; opacity:0.9; font-size:0.9rem;">Exercices + Solutions — 1 000 FCFA / an</p>
+                    </div>
+                    <!-- Body modal -->
+                    <div style="padding:1.75rem 2rem;">
+                        <form action="/payments/request" method="post" enctype="multipart/form-data" id="payment-form">
+                            <!-- Étape 1 : Méthode -->
+                            <div style="margin-bottom:1.25rem;">
+                                <p style="font-weight:700; color:#111827; margin:0 0 0.6rem; font-size:0.95rem;">1. Choisissez votre méthode de paiement</p>
+                                <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
+                                    <label style="cursor:pointer;">
+                                        <input type="radio" name="payment_method" value="orange" required style="display:none;" onchange="selectMethod('orange')">
+                                        <div id="btn-orange" style="border:2px solid #e5e7eb; border-radius:12px; padding:0.85rem 0.5rem; text-align:center; transition:all 0.2s; background:white;">
+                                            <div style="font-size:1.6rem; margin-bottom:0.25rem;">🟠</div>
+                                            <strong style="font-size:0.85rem; color:#374151;">Orange Money</strong>
+                                        </div>
+                                    </label>
+                                    <label style="cursor:pointer;">
+                                        <input type="radio" name="payment_method" value="wave" required style="display:none;" onchange="selectMethod('wave')">
+                                        <div id="btn-wave" style="border:2px solid #e5e7eb; border-radius:12px; padding:0.85rem 0.5rem; text-align:center; transition:all 0.2s; background:white;">
+                                            <div style="font-size:1.6rem; margin-bottom:0.25rem;">🔵</div>
+                                            <strong style="font-size:0.85rem; color:#374151;">Wave</strong>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Étape 2 : Numéro à payer -->
+                            <div style="margin-bottom:1.25rem;">
+                                <p style="font-weight:700; color:#111827; margin:0 0 0.6rem; font-size:0.95rem;">2. Envoyez le paiement à ce numéro</p>
+                                <div style="background:linear-gradient(135deg,#f5f3ff,#eef2ff); border:2px solid #c4b5fd; border-radius:14px; padding:1rem 1.25rem; text-align:center;">
+                                    <p style="margin:0 0 0.2rem; color:#6b7280; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em;">Numéro de paiement</p>
+                                    <p style="margin:0 0 0.2rem; font-size:1.8rem; font-weight:800; color:#7C3AED; letter-spacing:0.05em;">77 577 14 43</p>
+                                    <p style="margin:0; color:#6b7280; font-size:0.82rem;">Montant : <strong style="color:#111;">1 000 FCFA</strong> — Nom : <strong style="color:#111;">ELN Technologies</strong></p>
+                                </div>
+                            </div>
+
+                            <!-- Étape 3 : Upload preuve -->
+                            <div style="margin-bottom:1.5rem;">
+                                <p style="font-weight:700; color:#111827; margin:0 0 0.6rem; font-size:0.95rem;">3. Joignez la capture d'écran du paiement</p>
+                                <label style="display:block; border:2px dashed #c4b5fd; border-radius:12px; padding:1rem; text-align:center; cursor:pointer; background:#faf5ff; transition:all 0.2s;" 
+                                       onmouseover="this.style.borderColor='#7C3AED'" onmouseout="this.style.borderColor='#c4b5fd'">
+                                    <input type="file" name="proof_image" accept="image/*" required style="display:none;" onchange="previewProof(this)">
+                                    <div id="upload-placeholder">
+                                        <div style="font-size:1.5rem; margin-bottom:0.3rem;">📸</div>
+                                        <p style="margin:0; color:#7C3AED; font-weight:600; font-size:0.9rem;">Cliquez pour sélectionner</p>
+                                        <p style="margin:0.2rem 0 0; color:#9ca3af; font-size:0.75rem;">JPG, PNG, WEBP — Max 5 Mo</p>
+                                    </div>
+                                    <div id="proof-preview" style="display:none;">
+                                        <img id="proof-img-preview" style="max-width:100%; border-radius:8px; max-height:160px; object-fit:contain;">
+                                        <p id="proof-filename" style="margin:0.5rem 0 0; color:#7C3AED; font-size:0.8rem; font-weight:600;"></p>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <button type="submit" id="submit-payment-btn"
+                                    style="width:100%; background:linear-gradient(135deg,#7C3AED,#6366f1); color:white; border:none; padding:0.9rem; border-radius:12px; font-size:1rem; font-weight:700; cursor:pointer; box-shadow:0 4px 14px rgba(124,58,237,0.4); transition:all 0.2s;">
+                                📤 Envoyer ma demande
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                function openPaymentModal() {
+                    document.getElementById('modal-payment').style.display = 'flex';
+                }
+                function closePaymentModal() {
+                    document.getElementById('modal-payment').style.display = 'none';
+                }
+                document.getElementById('modal-payment').addEventListener('click', function(e) {
+                    if (e.target === this) closePaymentModal();
+                });
+                function selectMethod(method) {
+                    ['orange','wave'].forEach(m => {
+                        const el = document.getElementById('btn-'+m);
+                        el.style.border = '2px solid #e5e7eb';
+                        el.style.background = 'white';
+                    });
+                    const el = document.getElementById('btn-'+method);
+                    el.style.border = '2px solid #7C3AED';
+                    el.style.background = '#f5f3ff';
+                    el.style.boxShadow = '0 0 0 3px rgba(124,58,237,0.15)';
+                }
+                function previewProof(input) {
+                    const preview = document.getElementById('proof-preview');
+                    const placeholder = document.getElementById('upload-placeholder');
+                    const img = document.getElementById('proof-img-preview');
+                    const fname = document.getElementById('proof-filename');
+                    if (input.files && input.files[0]) {
+                        const reader = new FileReader();
+                        reader.onload = e => {
+                            img.src = e.target.result;
+                            fname.textContent = input.files[0].name;
+                            preview.style.display = 'block';
+                            placeholder.style.display = 'none';
+                        };
+                        reader.readAsDataURL(input.files[0]);
+                    }
+                }
+                const pf = document.getElementById('payment-form');
+                if (pf) {
+                    pf.addEventListener('submit', function() {
+                        const btn = document.getElementById('submit-payment-btn');
+                        btn.disabled = true;
+                        btn.textContent = 'Envoi en cours...';
+                    });
+                }
+            </script>
 
             <!-- Onglet Commentaires -->
             <div id="tab-commentaires" class="tab-content">
