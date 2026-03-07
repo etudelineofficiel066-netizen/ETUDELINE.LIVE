@@ -4427,7 +4427,24 @@
     <!-- ===== ONGLET PAIEMENTS ===== -->
     <div id="content-paiements" class="tab-content">
         <div class="card">
-            <h3 style="color:#7C3AED; margin-bottom:1.5rem;">💳 Demandes de paiement d'abonnement</h3>
+            <!-- Header avec stats -->
+            <div style="display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:1rem; margin-bottom:1.5rem;">
+                <div>
+                    <h3 style="color:#7C3AED; margin:0 0 0.25rem; font-size:1.3rem;">💳 Demandes d'abonnement Premium</h3>
+                    <p style="color:#6b7280; font-size:0.85rem; margin:0;">Exercices + Solutions — 1 000 FCFA / an — Numéro : <strong>77 577 14 43</strong></p>
+                </div>
+                <div style="display:flex; gap:0.75rem; flex-wrap:wrap;" id="payments-stats">
+                    <div style="background:#fefce8; border:1.5px solid #fbbf24; border-radius:10px; padding:0.4rem 0.9rem; font-size:0.82rem; font-weight:600; color:#92400e;">
+                        🟡 <span id="stat-pending">—</span> en attente
+                    </div>
+                    <div style="background:#f0fdf4; border:1.5px solid #86efac; border-radius:10px; padding:0.4rem 0.9rem; font-size:0.82rem; font-weight:600; color:#166534;">
+                        🟢 <span id="stat-approved">—</span> validées
+                    </div>
+                    <div style="background:#fef2f2; border:1.5px solid #fca5a5; border-radius:10px; padding:0.4rem 0.9rem; font-size:0.82rem; font-weight:600; color:#991b1b;">
+                        🔴 <span id="stat-rejected">—</span> refusées
+                    </div>
+                </div>
+            </div>
 
             <!-- Filtres rapides -->
             <div style="display:flex; gap:0.75rem; flex-wrap:wrap; margin-bottom:1.5rem;">
@@ -4509,6 +4526,10 @@
             document.getElementById('payments-loading').style.display = 'none';
             document.getElementById('payments-list').style.display = 'block';
 
+            document.getElementById('stat-pending').textContent = allPayments.filter(p => p.status === 'pending').length;
+            document.getElementById('stat-approved').textContent = allPayments.filter(p => p.status === 'approved').length;
+            document.getElementById('stat-rejected').textContent = allPayments.filter(p => p.status === 'rejected').length;
+
             const filtered = currentFilter === 'all' ? allPayments : allPayments.filter(p => p.status === currentFilter);
             const tbody = document.getElementById('payments-tbody');
             tbody.innerHTML = '';
@@ -4564,7 +4585,7 @@
         }
 
         async function approvePayment(paymentId, btn) {
-            if (!confirm('Valider cet abonnement et activer l\'accès aux solutions pour 365 jours ?')) return;
+            if (!confirm('Valider cet abonnement et activer l\'accès aux exercices + solutions pour 365 jours ?')) return;
             btn.disabled = true;
             btn.textContent = '...';
             try {
