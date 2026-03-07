@@ -4467,8 +4467,7 @@
                             <tr style="background:#f3f4f6; border-bottom:2px solid #e5e7eb;">
                                 <th style="padding:0.75rem; text-align:left;">#</th>
                                 <th style="padding:0.75rem; text-align:left;">Étudiant</th>
-                                <th style="padding:0.75rem; text-align:left;">Méthode</th>
-                                <th style="padding:0.75rem; text-align:left;">Montant</th>
+                                <th style="padding:0.75rem; text-align:left;">Montant / Durée</th>
                                 <th style="padding:0.75rem; text-align:left;">Statut</th>
                                 <th style="padding:0.75rem; text-align:left;">Date</th>
                                 <th style="padding:0.75rem; text-align:left;">Preuve</th>
@@ -4552,8 +4551,7 @@
                 tr.innerHTML = `
                     <td style="padding:0.75rem; color:#666;">${p.id}</td>
                     <td style="padding:0.75rem; font-weight:600;">${p.student_name}<br><small style="color:#888;">${p.student_username}</small></td>
-                    <td style="padding:0.75rem;">${methodLabels[p.payment_method] || p.payment_method}</td>
-                    <td style="padding:0.75rem; font-weight:600;">${p.amount} FCFA</td>
+                    <td style="padding:0.75rem; font-weight:600;">${p.amount} FCFA<br><small style="color:#888; font-weight:400;">${{30:'1 mois',90:'3 mois',365:'1 an'}[p.duration_days] || (p.duration_days+' j')}</small></td>
                     <td style="padding:0.75rem;">${statusLabels[p.status] || p.status}</td>
                     <td style="padding:0.75rem; color:#666;">${date}</td>
                     <td style="padding:0.75rem;">

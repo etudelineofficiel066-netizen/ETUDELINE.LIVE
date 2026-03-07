@@ -2045,9 +2045,16 @@ ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/webp", "image/gif"}
 MAX_PROOF_SIZE = 5 * 1024 * 1024  # 5 MB
 
 
+PLANS = {
+    "1month":  {"amount": 500,  "duration_days": 30,  "label": "1 mois"},
+    "3months": {"amount": 1000, "duration_days": 90,  "label": "3 mois"},
+    "1year":   {"amount": 2500, "duration_days": 365, "label": "1 an"},
+}
+
 @app.post("/payments/request")
 async def submit_payment_request(
     request: Request,
+    plan: str = Form(...),
     proof_image: UploadFile = File(...),
     db: Session = Depends(get_db),
 ):
@@ -2057,7 +2064,12 @@ async def submit_payment_request(
     if not etudiant:
         raise HTTPException(status_code=404, detail="Étudiant introuvable")
 
+    if plan not in PLANS:
+        raise HTTPException(status_code=400, detail="Plan invalide")
+
     payment_method = "wave"
+    amount = PLANS[plan]["amount"]
+    duration_days = PLANS[plan]["duration_days"]
 
     # Vérifier qu'il n'a pas déjà une demande en attente
     existing = db.query(PaymentRequestDB).filter(
@@ -2086,7 +2098,8 @@ async def submit_payment_request(
     payment_req = PaymentRequestDB(
         student_id=etudiant.id,
         payment_method=payment_method,
-        amount=1000,
+        amount=amount,
+        duration_days=duration_days,
         proof_image_path=str(file_path),
         status="pending",
     )
@@ -2119,6 +2132,7 @@ async def admin_list_payments(
             "student_username": etudiant.username if etudiant else "",
             "payment_method": p.payment_method,
             "amount": p.amount,
+            "duration_days": getattr(p, "duration_days", 365),
             "status": p.status,
             "created_at": p.created_at.isoformat() if p.created_at else "",
             "proof_url": f"/admin/payments/{p.id}/proof",
@@ -2160,10 +2174,18 @@ async def admin_approve_payment(
     payment.status = "approved"
     etudiant = db.query(EtudiantDB).filter_by(id=payment.student_id).first()
     if etudiant:
+        days = getattr(payment, "duration_days", 365) or 365
+        now = datetime.utcnow()
+        current_expiry = etudiant.subscription_expires
+        if current_expiry and current_expiry > now:
+            new_expiry = current_expiry + timedelta(days=days)
+        else:
+            new_expiry = now + timedelta(days=days)
         etudiant.subscription_active = True
-        etudiant.subscription_expires = datetime.utcnow() + timedelta(days=365)
+        etudiant.subscription_expires = new_expiry
     db.commit()
-    return JSONResponse({"success": True, "message": "Abonnement activé pour 365 jours"})
+    label = {30: "1 mois", 90: "3 mois", 365: "1 an"}.get(days, f"{days} jours")
+    return JSONResponse({"success": True, "message": f"Abonnement activé pour {label}"})
 
 
 @app.post("/admin/payments/{payment_id}/reject")

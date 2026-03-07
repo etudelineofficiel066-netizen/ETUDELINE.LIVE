@@ -422,6 +422,7 @@ class PaymentRequest(Base):
     student_id = Column(Integer, ForeignKey("etudiants.id", ondelete="CASCADE"), nullable=False, index=True)
     payment_method = Column(String(20), nullable=False)  # orange / wave
     amount = Column(Integer, default=1000, nullable=False)
+    duration_days = Column(Integer, default=365, nullable=False)  # 30 / 90 / 365
     proof_image_path = Column(String(500), nullable=False)
     status = Column(String(20), default="pending", nullable=False)  # pending / approved / rejected
     created_at = Column(DateTime, default=datetime.utcnow)

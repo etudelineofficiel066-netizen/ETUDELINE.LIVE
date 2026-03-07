@@ -782,24 +782,55 @@
                                 style="position:absolute; top:12px; right:16px; background:rgba(255,255,255,0.2); border:none; color:white; font-size:1.1rem; cursor:pointer; width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center;">✕</button>
                         <div style="font-size:2rem; margin-bottom:0.4rem;">💳</div>
                         <h3 style="margin:0; font-size:1.2rem; font-weight:700;">Abonnement Premium</h3>
-                        <p style="margin:0.3rem 0 0; opacity:0.9; font-size:0.9rem;">Exercices + Solutions — 1 000 FCFA / an</p>
+                        <p style="margin:0.3rem 0 0; opacity:0.9; font-size:0.9rem;">Exercices + Solutions — choisissez votre formule</p>
                     </div>
                     <!-- Body modal -->
                     <div style="padding:1.75rem 2rem;">
                         <form action="/payments/request" method="post" enctype="multipart/form-data" id="payment-form">
-                            <!-- Étape 1 : Numéro à payer -->
+                            <input type="hidden" name="plan" id="plan-input" value="">
+
+                            <!-- Étape 1 : Choisir la formule -->
                             <div style="margin-bottom:1.25rem;">
-                                <p style="font-weight:700; color:#111827; margin:0 0 0.6rem; font-size:0.95rem;">1. Envoyez le paiement à ce numéro</p>
-                                <div style="background:linear-gradient(135deg,#f5f3ff,#eef2ff); border:2px solid #c4b5fd; border-radius:14px; padding:1rem 1.25rem; text-align:center;">
-                                    <p style="margin:0 0 0.2rem; color:#6b7280; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em;">Numéro de paiement</p>
-                                    <p style="margin:0 0 0.2rem; font-size:1.8rem; font-weight:800; color:#7C3AED; letter-spacing:0.05em;">77 577 14 43</p>
-                                    <p style="margin:0; color:#6b7280; font-size:0.82rem;">Montant : <strong style="color:#111;">1 000 FCFA</strong> — Nom : <strong style="color:#111;">ELN Technologies</strong></p>
+                                <p style="font-weight:700; color:#111827; margin:0 0 0.75rem; font-size:0.95rem;">1. Choisissez votre formule</p>
+                                <div id="plan-error" style="display:none; color:#dc2626; font-size:0.82rem; margin-bottom:0.5rem; padding:0.4rem 0.75rem; background:#fef2f2; border-radius:8px; border:1px solid #fecaca;">
+                                    Veuillez sélectionner une formule.
+                                </div>
+                                <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.6rem;">
+                                    <div id="plan-1month" onclick="selectPlan('1month','500','1 mois')"
+                                         style="border:2px solid #e5e7eb; border-radius:12px; padding:0.75rem 0.4rem; text-align:center; cursor:pointer; transition:all 0.2s; background:white;">
+                                        <div style="font-size:1.1rem; font-weight:800; color:#7C3AED;">500</div>
+                                        <div style="font-size:0.7rem; color:#6b7280; font-weight:600;">FCFA</div>
+                                        <div style="font-size:0.78rem; color:#374151; margin-top:0.3rem; font-weight:700;">1 mois</div>
+                                    </div>
+                                    <div id="plan-3months" onclick="selectPlan('3months','1 000','3 mois')"
+                                         style="border:2px solid #e5e7eb; border-radius:12px; padding:0.75rem 0.4rem; text-align:center; cursor:pointer; transition:all 0.2s; background:white; position:relative;">
+                                        <div style="position:absolute; top:-9px; left:50%; transform:translateX(-50%); background:#f59e0b; color:white; font-size:0.62rem; font-weight:700; padding:2px 8px; border-radius:20px; white-space:nowrap;">POPULAIRE</div>
+                                        <div style="font-size:1.1rem; font-weight:800; color:#7C3AED;">1 000</div>
+                                        <div style="font-size:0.7rem; color:#6b7280; font-weight:600;">FCFA</div>
+                                        <div style="font-size:0.78rem; color:#374151; margin-top:0.3rem; font-weight:700;">3 mois</div>
+                                    </div>
+                                    <div id="plan-1year" onclick="selectPlan('1year','2 500','1 an')"
+                                         style="border:2px solid #e5e7eb; border-radius:12px; padding:0.75rem 0.4rem; text-align:center; cursor:pointer; transition:all 0.2s; background:white;">
+                                        <div style="font-size:1.1rem; font-weight:800; color:#7C3AED;">2 500</div>
+                                        <div style="font-size:0.7rem; color:#6b7280; font-weight:600;">FCFA</div>
+                                        <div style="font-size:0.78rem; color:#374151; margin-top:0.3rem; font-weight:700;">1 an</div>
+                                    </div>
                                 </div>
                             </div>
 
-                            <!-- Étape 2 : Upload preuve -->
+                            <!-- Étape 2 : Numéro à payer -->
+                            <div style="margin-bottom:1.25rem;">
+                                <p style="font-weight:700; color:#111827; margin:0 0 0.6rem; font-size:0.95rem;">2. Envoyez le paiement à ce numéro</p>
+                                <div style="background:linear-gradient(135deg,#f5f3ff,#eef2ff); border:2px solid #c4b5fd; border-radius:14px; padding:1rem 1.25rem; text-align:center;">
+                                    <p style="margin:0 0 0.2rem; color:#6b7280; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em;">Numéro de paiement</p>
+                                    <p style="margin:0 0 0.2rem; font-size:1.8rem; font-weight:800; color:#7C3AED; letter-spacing:0.05em;">77 577 14 43</p>
+                                    <p style="margin:0; color:#6b7280; font-size:0.82rem;">Montant : <strong id="plan-amount-display" style="color:#111;">—</strong> — Nom : <strong style="color:#111;">ELN Technologies</strong></p>
+                                </div>
+                            </div>
+
+                            <!-- Étape 3 : Upload preuve -->
                             <div style="margin-bottom:1.5rem;">
-                                <p style="font-weight:700; color:#111827; margin:0 0 0.6rem; font-size:0.95rem;">2. Joignez la capture d'écran du paiement</p>
+                                <p style="font-weight:700; color:#111827; margin:0 0 0.6rem; font-size:0.95rem;">3. Joignez la capture d'écran du paiement</p>
                                 <div id="file-error" style="display:none; color:#dc2626; font-size:0.82rem; margin-bottom:0.5rem; padding:0.4rem 0.75rem; background:#fef2f2; border-radius:8px; border:1px solid #fecaca;">
                                     Veuillez joindre une capture d'écran du paiement.
                                 </div>
@@ -839,6 +870,21 @@
                 document.getElementById('modal-payment').addEventListener('click', function(e) {
                     if (e.target === this) closePaymentModal();
                 });
+                function selectPlan(plan, amount, label) {
+                    document.getElementById('plan-input').value = plan;
+                    document.getElementById('plan-amount-display').textContent = amount + ' FCFA';
+                    ['1month','3months','1year'].forEach(p => {
+                        const el = document.getElementById('plan-'+p);
+                        el.style.border = '2px solid #e5e7eb';
+                        el.style.background = 'white';
+                        el.style.boxShadow = 'none';
+                    });
+                    const selected = document.getElementById('plan-'+plan);
+                    selected.style.border = '2px solid #7C3AED';
+                    selected.style.background = '#f5f3ff';
+                    selected.style.boxShadow = '0 0 0 3px rgba(124,58,237,0.15)';
+                    document.getElementById('plan-error').style.display = 'none';
+                }
                 function previewProof(input) {
                     const preview = document.getElementById('proof-preview');
                     const placeholder = document.getElementById('upload-placeholder');
@@ -857,11 +903,18 @@
                     }
                 }
                 function submitPaymentForm() {
+                    const planInput = document.getElementById('plan-input');
                     const fileInput = document.getElementById('proof-file-input');
+                    let valid = true;
+                    if (!planInput.value) {
+                        document.getElementById('plan-error').style.display = 'block';
+                        valid = false;
+                    }
                     if (!fileInput.files || fileInput.files.length === 0) {
                         document.getElementById('file-error').style.display = 'block';
-                        return;
+                        valid = false;
                     }
+                    if (!valid) return;
 
                     const btn = document.getElementById('submit-payment-btn');
                     btn.disabled = true;
