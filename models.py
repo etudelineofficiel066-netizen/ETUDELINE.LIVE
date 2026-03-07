@@ -193,16 +193,19 @@ class ChapitreComplet(Base):
     cours_texte = Column(Text, nullable=True)
     cours_fichier_nom = Column(String(500), nullable=True)
     cours_fichier_path = Column(String(1000), nullable=True)
-    
+    cours_fichier_description = Column(String(2000), nullable=True)
+
     # Exercices
     exercice_texte = Column(Text, nullable=True)
     exercice_fichier_nom = Column(String(500), nullable=True)
     exercice_fichier_path = Column(String(1000), nullable=True)
-    
+    exercice_fichier_description = Column(String(2000), nullable=True)
+
     # Solutions
     solution_texte = Column(Text, nullable=True)
     solution_fichier_nom = Column(String(500), nullable=True)
     solution_fichier_path = Column(String(1000), nullable=True)
+    solution_fichier_description = Column(String(2000), nullable=True)
     
     created_by = Column(String(100), ForeignKey("professeurs.username", ondelete='CASCADE'), nullable=False, index=True)
     created_at = Column(DateTime, default=datetime.utcnow)

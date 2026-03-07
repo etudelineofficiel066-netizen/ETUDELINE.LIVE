@@ -1295,11 +1295,14 @@ async def create_chapitre_complet(
     # Récupérer tous les fichiers uploadés via le formulaire
     form_data = await request.form()
     
-    # Collecter les fichiers pour chaque section
+    # Collecter les fichiers et descriptions pour chaque section
     cours_files = []
     exercice_files = []
     solution_files = []
-    
+    cours_descriptions = []
+    exercice_descriptions = []
+    solution_descriptions = []
+
     for key, value in form_data.items():
         if key.startswith('cours_fichier') and hasattr(value, 'filename') and value.filename:
             cours_files.append(value)
@@ -1307,6 +1310,12 @@ async def create_chapitre_complet(
             exercice_files.append(value)
         elif key.startswith('solution_fichier') and hasattr(value, 'filename') and value.filename:
             solution_files.append(value)
+        elif key.startswith('cours_description') and not hasattr(value, 'filename'):
+            cours_descriptions.append(str(value).strip())
+        elif key.startswith('exercice_description') and not hasattr(value, 'filename'):
+            exercice_descriptions.append(str(value).strip())
+        elif key.startswith('solution_description') and not hasattr(value, 'filename'):
+            solution_descriptions.append(str(value).strip())
     
     # Validate that each section has at least text or file
     errors = []
@@ -1396,14 +1405,17 @@ async def create_chapitre_complet(
             cours_texte=cours_texte,
             cours_fichier_nom=cours_nom,
             cours_fichier_path=cours_path,
+            cours_fichier_description="|||".join(d for d in cours_descriptions if d) or None,
             # Exercices
             exercice_texte=exercice_texte,
             exercice_fichier_nom=exercice_nom,
             exercice_fichier_path=exercice_path,
+            exercice_fichier_description="|||".join(d for d in exercice_descriptions if d) or None,
             # Solutions
             solution_texte=solution_texte,
             solution_fichier_nom=solution_nom,
             solution_fichier_path=solution_path,
+            solution_fichier_description="|||".join(d for d in solution_descriptions if d) or None,
             created_by=prof_username
         )
         
