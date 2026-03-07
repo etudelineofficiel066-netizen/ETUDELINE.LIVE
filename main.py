@@ -80,13 +80,20 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 async def startup_event():
     """Initialiser la base de données au démarrage - Optimisé pour Render"""
     print("🚀 Démarrage du serveur Étude LINE...")
-    
-    # Version minimale pour démarrage rapide sur Render
-    # Les migrations sont maintenant désactivées pour éviter les timeouts
+
+    # Vérifier la connexion avant tout
+    from database import check_db_connection
+    db_ok = check_db_connection()
+    if not db_ok:
+        print("❌ CRITIQUE : Impossible de se connecter à la base de données.")
+        print("   → Sur Render : configurez EXTERNAL_DATABASE_URL dans les variables d'environnement")
+        print("   → L'application démarrera mais les requêtes BD échoueront")
+    else:
+        print("✅ Connexion à la base de données OK")
+
     try:
         create_tables()
         print("✅ Tables de base de données vérifiées")
-        # Forcer la création de l'admin au démarrage
         from database import SessionLocal
         db = SessionLocal()
         try:
@@ -95,13 +102,24 @@ async def startup_event():
             db.close()
     except Exception as e:
         print(f"⚠️ Erreur création tables ou admin: {e}")
-    
+
     # Reprogrammer les notifications pour les cours programmés au redémarrage
     try:
         reschedule_pending_course_notifications()
         print("✅ Notifications de cours reprogrammées")
     except Exception as e:
         print(f"⚠️ Erreur reprogrammation notifications: {e}")
+
+
+@app.get("/health")
+async def health_check():
+    """Endpoint de diagnostic pour Render / monitoring"""
+    from database import check_db_connection
+    db_ok = check_db_connection()
+    return {
+        "status": "ok" if db_ok else "degraded",
+        "database": "connected" if db_ok else "unreachable",
+    }
 # Configuration from environment variables
 SECRET_KEY = os.getenv("SECRET_KEY", "your-super-secret-key-change-this")
 
