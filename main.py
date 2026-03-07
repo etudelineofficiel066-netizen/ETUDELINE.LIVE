@@ -197,8 +197,9 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 def create_default_admin_if_needed(db: Session) -> None:
     """Create default admin if none exists using environment variables"""
     admin_username = os.getenv("ADMIN_USERNAME")
-    admin_password = os.getenv("ADMIN_PASSWORD")
-    
+    # Support both ADMIN_PASSWORD and ADMIN_PASSWORLD (legacy typo in some configs)
+    admin_password = os.getenv("ADMIN_PASSWORD") or os.getenv("ADMIN_PASSWORLD")
+
     if not admin_username or not admin_password:
         print("⚠️ ADMIN_USERNAME ou ADMIN_PASSWORD non configurés. Saut de la création de l'admin.")
         return
@@ -1923,8 +1924,12 @@ async def chapitre_detail_prof(chapitre_id: int, request: Request, db: Session =
         "matiere_nom": chapitre.matiere.nom if chapitre.matiere else "Matière inconnue",
         "commentaires": commentaires,
         "dashboard_url": "/dashboard/prof",
-        "user_type": "professeur",
-        "user_id": prof.id if prof else None
+        "user_type": "prof",
+        "user_id": prof.id if prof else None,
+        "subscription_active": True,
+        "subscription_expires": None,
+        "has_pending_payment": False,
+        "last_payment_status": None,
     })
 
 

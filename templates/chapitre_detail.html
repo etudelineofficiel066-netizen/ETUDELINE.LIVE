@@ -914,7 +914,7 @@
                             <div class="comment-item">
                                 <div class="comment-header">
                                     <span class="comment-author">
-                                        {% if comment.auteur_type == 'professeur' %}
+                                        {% if comment.auteur_type in ('prof', 'professeur') %}
                                             👨‍🏫 {{ comment.auteur_nom }}
                                         {% elif comment.auteur_type == 'etudiant' %}
                                             🎓 {{ comment.auteur_nom }}
