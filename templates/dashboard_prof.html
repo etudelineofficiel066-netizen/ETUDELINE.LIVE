@@ -1818,7 +1818,7 @@
                             <div id="cours-files-container">
                                 <div style="background:#f1f8f1; border:1px solid #c8e6c9; border-radius:8px; padding:0.65rem; margin-bottom:0.5rem;">
                                     <input type="file" name="cours_fichier" accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.odt,.odp" style="width:100%; margin-bottom:0.5rem;">
-                                    <input type="text" name="cours_description_0" placeholder="📝 Description de ce fichier (ex: Cours introduction, Chapitre 1...)" style="width:100%; border:1px solid #a5d6a7; border-radius:6px; padding:0.4rem 0.65rem; font-size:0.85rem; box-sizing:border-box; background:white;">
+                                    <textarea name="cours_description_0" placeholder="📝 Description de ce fichier (ex: Cours introduction, Chapitre 1...)" style="width:100%; min-height:200px; border:1px solid #a5d6a7; border-radius:6px; padding:0.75rem; font-size:1rem; box-sizing:border-box; background:white; resize:vertical; font-family:inherit; line-height:1.5;"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -1843,7 +1843,7 @@
                             <div id="exercice-files-container">
                                 <div style="background:#fffde7; border:1px solid #ffe082; border-radius:8px; padding:0.65rem; margin-bottom:0.5rem;">
                                     <input type="file" name="exercice_fichier" accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,.odt,.ods" style="width:100%; margin-bottom:0.5rem;">
-                                    <input type="text" name="exercice_description_0" placeholder="📝 Description de ce fichier (ex: Exercice 1 - Dérivation, TD n°2...)" style="width:100%; border:1px solid #ffe082; border-radius:6px; padding:0.4rem 0.65rem; font-size:0.85rem; box-sizing:border-box; background:white;">
+                                    <textarea name="exercice_description_0" placeholder="📝 Description de ce fichier (ex: Exercice 1 - Dérivation, TD n°2...)" style="width:100%; min-height:200px; border:1px solid #ffe082; border-radius:6px; padding:0.75rem; font-size:1rem; box-sizing:border-box; background:white; resize:vertical; font-family:inherit; line-height:1.5;"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -1868,7 +1868,7 @@
                             <div id="solution-files-container">
                                 <div style="background:#e3f2fd; border:1px solid #90caf9; border-radius:8px; padding:0.65rem; margin-bottom:0.5rem;">
                                     <input type="file" name="solution_fichier" accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,.odt,.ods" style="width:100%; margin-bottom:0.5rem;">
-                                    <input type="text" name="solution_description_0" placeholder="📝 Description de ce fichier (ex: Corrigé exercice 1, Solution TD n°2...)" style="width:100%; border:1px solid #90caf9; border-radius:6px; padding:0.4rem 0.65rem; font-size:0.85rem; box-sizing:border-box; background:white;">
+                                    <textarea name="solution_description_0" placeholder="📝 Description de ce fichier (ex: Corrigé exercice 1, Solution TD n°2...)" style="width:100%; min-height:200px; border:1px solid #90caf9; border-radius:6px; padding:0.75rem; font-size:1rem; box-sizing:border-box; background:white; resize:vertical; font-family:inherit; line-height:1.5;"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -2588,11 +2588,10 @@
             fileRow.appendChild(removeBtn);
 
             // Champ description
-            const descInput = document.createElement('input');
-            descInput.type = 'text';
+            const descInput = document.createElement('textarea');
             descInput.name = `${type}_description_${counter}`;
             descInput.placeholder = colors.placeholder;
-            descInput.style.cssText = `width:100%; border:1px solid ${colors.descBorder}; border-radius:6px; padding:0.4rem 0.65rem; font-size:0.85rem; box-sizing:border-box; background:white;`;
+            descInput.style.cssText = `width:100%; min-height:200px; border:1px solid ${colors.descBorder}; border-radius:6px; padding:0.75rem; font-size:1rem; box-sizing:border-box; background:white; resize:vertical; font-family:inherit; line-height:1.5; margin-top:0.4rem;`;
 
             wrapper.appendChild(fileRow);
             wrapper.appendChild(descInput);
