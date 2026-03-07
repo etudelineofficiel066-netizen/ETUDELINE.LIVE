@@ -120,6 +120,12 @@ async def health_check():
         "status": "ok" if db_ok else "degraded",
         "database": "connected" if db_ok else "unreachable",
     }
+
+@app.get("/aide/paiement")
+async def aide_paiement(request: Request):
+    """Page d'aide pour guider les étudiants dans le processus de paiement"""
+    return templates.TemplateResponse("aide_paiement.html", {"request": request})
+
 # Configuration from environment variables
 SECRET_KEY = os.getenv("SECRET_KEY", "your-super-secret-key-change-this")
 

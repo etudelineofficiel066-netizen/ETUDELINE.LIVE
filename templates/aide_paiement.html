@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comment payer — Étude LINE</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f8f7ff;
+            color: #111827;
+            min-height: 100vh;
+        }
+        .header {
+            background: linear-gradient(135deg, #7C3AED 0%, #6366f1 100%);
+            color: white;
+            text-align: center;
+            padding: 2rem 1rem 2.5rem;
+        }
+        .header h1 { font-size: 1.6rem; font-weight: 800; margin-bottom: 0.4rem; }
+        .header p  { opacity: 0.9; font-size: 0.95rem; }
+        .back-btn {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            background: rgba(255,255,255,0.2); color: white;
+            border: none; border-radius: 8px; padding: 0.45rem 1rem;
+            font-size: 0.85rem; font-weight: 600; cursor: pointer;
+            text-decoration: none; margin-bottom: 1.2rem;
+        }
+
+        .container { max-width: 560px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+
+        /* Section card */
+        .card {
+            background: white; border-radius: 18px;
+            box-shadow: 0 2px 12px rgba(124,58,237,0.08);
+            margin-bottom: 1.25rem; overflow: hidden;
+        }
+        .card-header {
+            padding: 1rem 1.25rem 0.75rem;
+            border-bottom: 1px solid #f3f4f6;
+            display: flex; align-items: center; gap: 0.75rem;
+        }
+        .card-header .icon-wrap {
+            width: 42px; height: 42px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.4rem; flex-shrink: 0;
+        }
+        .card-header h2 { font-size: 1rem; font-weight: 800; }
+        .card-header p  { font-size: 0.82rem; color: #6b7280; margin-top: 0.1rem; }
+
+        /* Steps */
+        .steps { padding: 1rem 1.25rem; }
+        .step {
+            display: flex; gap: 0.9rem; margin-bottom: 1.1rem; align-items: flex-start;
+        }
+        .step:last-child { margin-bottom: 0; }
+        .step-num {
+            width: 30px; height: 30px; border-radius: 50%;
+            background: linear-gradient(135deg,#7C3AED,#6366f1);
+            color: white; font-size: 0.82rem; font-weight: 800;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; margin-top: 2px;
+        }
+        .step-body { flex: 1; }
+        .step-body strong { font-size: 0.92rem; display: block; margin-bottom: 0.2rem; }
+        .step-body span   { font-size: 0.83rem; color: #4b5563; line-height: 1.5; }
+        .step-body .tip {
+            margin-top: 0.4rem; background: #f0fdf4; border: 1px solid #bbf7d0;
+            border-radius: 8px; padding: 0.4rem 0.65rem;
+            font-size: 0.78rem; color: #15803d;
+        }
+        .step-body .warn {
+            margin-top: 0.4rem; background: #fffbeb; border: 1px solid #fde68a;
+            border-radius: 8px; padding: 0.4rem 0.65rem;
+            font-size: 0.78rem; color: #92400e;
+        }
+
+        /* Highlight box */
+        .highlight {
+            background: linear-gradient(135deg,#f5f3ff,#eef2ff);
+            border: 2px solid #c4b5fd; border-radius: 14px;
+            padding: 1rem 1.25rem; text-align: center; margin: 0 1.25rem 1.25rem;
+        }
+        .highlight .num { font-size: 2rem; font-weight: 900; color: #7C3AED; letter-spacing: 0.06em; }
+        .highlight .sub { font-size: 0.8rem; color: #6b7280; margin-top: 0.2rem; }
+
+        /* Plans summary */
+        .plans { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.5rem; padding: 0 1.25rem 1.25rem; }
+        .plan-card {
+            border: 2px solid #e5e7eb; border-radius: 12px;
+            padding: 0.7rem 0.4rem; text-align: center; background: #fafafa;
+        }
+        .plan-card .price { font-size: 1.05rem; font-weight: 800; color: #7C3AED; }
+        .plan-card .unit  { font-size: 0.65rem; color: #9ca3af; }
+        .plan-card .dur   { font-size: 0.75rem; font-weight: 700; color: #374151; margin-top: 0.25rem; }
+        .plan-card.popular { border-color: #7C3AED; background: #f5f3ff; }
+
+        /* Methods */
+        .methods { display: flex; gap: 0.6rem; padding: 0 1.25rem 1.25rem; }
+        .method-badge {
+            flex: 1; display: flex; align-items: center; gap: 0.5rem;
+            border-radius: 10px; padding: 0.65rem 0.75rem;
+        }
+        .method-badge .name { font-size: 0.8rem; font-weight: 700; }
+        .method-badge .desc { font-size: 0.68rem; margin-top: 1px; }
+
+        /* Status timeline */
+        .timeline { padding: 1rem 1.25rem; }
+        .tl-item { display: flex; gap: 0.75rem; margin-bottom: 1rem; }
+        .tl-item:last-child { margin-bottom: 0; }
+        .tl-dot {
+            width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.85rem; margin-top: 1px;
+        }
+        .tl-body strong { font-size: 0.88rem; display: block; }
+        .tl-body span   { font-size: 0.8rem; color: #6b7280; }
+
+        /* FAQ */
+        .faq-item {
+            border-top: 1px solid #f3f4f6; padding: 0.9rem 1.25rem;
+        }
+        .faq-item strong { font-size: 0.88rem; color: #111827; display: block; margin-bottom: 0.3rem; }
+        .faq-item span   { font-size: 0.82rem; color: #4b5563; line-height: 1.5; }
+
+        /* CTA */
+        .cta-btn {
+            display: block; width: 100%;
+            background: linear-gradient(135deg,#7C3AED,#6366f1);
+            color: white; border: none; padding: 1rem;
+            border-radius: 14px; font-size: 1rem; font-weight: 700;
+            cursor: pointer; text-align: center; text-decoration: none;
+            box-shadow: 0 4px 14px rgba(124,58,237,0.35);
+            margin-top: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <a href="javascript:history.back()" class="back-btn">← Retour</a>
+    <div style="font-size:2.5rem; margin-bottom:0.6rem;">📖</div>
+    <h1>Comment payer son abonnement ?</h1>
+    <p>Guide complet — étape par étape, pour tous les niveaux</p>
+</div>
+
+<div class="container">
+
+    <!-- ── Qu'est-ce que le Premium ? ── -->
+    <div class="card">
+        <div class="card-header">
+            <div class="icon-wrap" style="background:#f5f3ff;">⭐</div>
+            <div>
+                <h2>Qu'est-ce que l'abonnement Premium ?</h2>
+                <p>Comprendre avant de payer</p>
+            </div>
+        </div>
+        <div class="steps" style="padding-top:0.9rem;">
+            <p style="font-size:0.88rem; color:#4b5563; line-height:1.65; margin-bottom:0.9rem;">
+                Par défaut, les cours sont <strong>gratuits</strong> sur Étude LINE. Mais les <strong>exercices</strong> et les <strong>corrigés</strong> sont réservés aux abonnés Premium.
+            </p>
+            <p style="font-size:0.88rem; color:#4b5563; line-height:1.65;">
+                En vous abonnant, vous accédez <strong>immédiatement</strong> à tous les exercices et solutions de tous vos cours, pour la durée choisie.
+            </p>
+        </div>
+        <!-- Plans -->
+        <div class="plans">
+            <div class="plan-card">
+                <div class="price">500</div>
+                <div class="unit">FCFA</div>
+                <div class="dur">1 mois</div>
+            </div>
+            <div class="plan-card popular">
+                <div style="font-size:0.58rem; font-weight:700; color:#f59e0b; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:2px;">Populaire</div>
+                <div class="price">1 000</div>
+                <div class="unit">FCFA</div>
+                <div class="dur">3 mois</div>
+            </div>
+            <div class="plan-card">
+                <div class="price">2 500</div>
+                <div class="unit">FCFA</div>
+                <div class="dur">1 an</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Méthodes acceptées ── -->
+    <div class="card">
+        <div class="card-header">
+            <div class="icon-wrap" style="background:#fff7ed;">💳</div>
+            <div>
+                <h2>Méthodes de paiement acceptées</h2>
+                <p>Payez avec ce que vous avez déjà</p>
+            </div>
+        </div>
+        <div class="methods">
+            <div class="method-badge" style="background:#fff7ed; border:1.5px solid #fed7aa;">
+                <span style="font-size:1.6rem;">🟠</span>
+                <div>
+                    <div class="name" style="color:#c2410c;">Orange Money</div>
+                    <div class="desc" style="color:#9a3412;">Via l'appli ou USSD *144#</div>
+                </div>
+            </div>
+            <div class="method-badge" style="background:#eff6ff; border:1.5px solid #bfdbfe;">
+                <span style="font-size:1.6rem;">🔵</span>
+                <div>
+                    <div class="name" style="color:#1d4ed8;">Wave</div>
+                    <div class="desc" style="color:#1e40af;">Via l'appli Wave</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Étapes de paiement ── -->
+    <div class="card">
+        <div class="card-header">
+            <div class="icon-wrap" style="background:#f0fdf4;">✅</div>
+            <div>
+                <h2>Comment payer ? (4 étapes)</h2>
+                <p>Suivez chaque étape dans l'ordre</p>
+            </div>
+        </div>
+        <div class="steps">
+
+            <div class="step">
+                <div class="step-num">1</div>
+                <div class="step-body">
+                    <strong>Choisissez votre formule</strong>
+                    <span>Dans le formulaire de paiement, cliquez sur la durée qui vous convient : <b>1 mois (500 FCFA)</b>, <b>3 mois (1 000 FCFA)</b> ou <b>1 an (2 500 FCFA)</b>. La formule choisie sera surlignée en violet.</span>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">2</div>
+                <div class="step-body">
+                    <strong>Envoyez l'argent au numéro indiqué</strong>
+                    <span>Ouvrez votre application <b>Wave</b> ou <b>Orange Money</b>, puis envoyez le montant exact au numéro :</span>
+                    <div style="background:#f5f3ff; border:2px solid #c4b5fd; border-radius:10px; padding:0.6rem; text-align:center; margin-top:0.5rem;">
+                        <div style="font-size:1.5rem; font-weight:900; color:#7C3AED; letter-spacing:0.06em;">77 577 14 43</div>
+                        <div style="font-size:0.75rem; color:#6b7280; margin-top:0.2rem;">Nom du destinataire : <strong style="color:#111;">ELN Technologies</strong></div>
+                    </div>
+                    <div class="tip">💡 Vérifiez bien le numéro avant de confirmer l'envoi.</div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">3</div>
+                <div class="step-body">
+                    <strong>Faites une capture d'écran du reçu</strong>
+                    <span>Après l'envoi, votre appli affiche un <b>reçu de transaction</b>. Faites une capture d'écran de cette page (appuyez simultanément sur les boutons <b>Volume bas + Power</b> sur Android, ou <b>Power + Home</b> sur iPhone).</span>
+                    <div class="warn">⚠️ La capture doit montrer : le montant envoyé, le numéro destinataire et la date.</div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-num">4</div>
+                <div class="step-body">
+                    <strong>Envoyez votre demande sur Étude LINE</strong>
+                    <span>Retournez sur Étude LINE, cliquez sur <b>"Débloquer l'accès Premium"</b>, sélectionnez votre formule, puis dans la section <em>"Joignez la capture d'écran"</em>, appuyez sur le cadre pour sélectionner la photo depuis votre galerie. Cliquez enfin sur <b>"Envoyer ma demande"</b>.</span>
+                    <div class="tip">✅ Un message de confirmation s'affiche quand votre demande est bien reçue.</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ── Que se passe-t-il ensuite ? ── -->
+    <div class="card">
+        <div class="card-header">
+            <div class="icon-wrap" style="background:#eff6ff;">⏳</div>
+            <div>
+                <h2>Que se passe-t-il après l'envoi ?</h2>
+                <p>Votre demande est vérifiée par un administrateur</p>
+            </div>
+        </div>
+        <div class="timeline">
+            <div class="tl-item">
+                <div class="tl-dot" style="background:#fef9c3; color:#854d0e;">📤</div>
+                <div class="tl-body">
+                    <strong>Votre demande est envoyée</strong>
+                    <span>Elle apparaît comme "En attente" dans notre système.</span>
+                </div>
+            </div>
+            <div class="tl-item">
+                <div class="tl-dot" style="background:#e0f2fe; color:#0369a1;">🔍</div>
+                <div class="tl-body">
+                    <strong>Vérification de votre paiement</strong>
+                    <span>Un administrateur examine votre capture d'écran et vérifie la transaction. Cela prend généralement <b>quelques heures</b> (moins de 24h).</span>
+                </div>
+            </div>
+            <div class="tl-item">
+                <div class="tl-dot" style="background:#dcfce7; color:#15803d;">✅</div>
+                <div class="tl-body">
+                    <strong>Accès activé !</strong>
+                    <span>Dès validation, votre compte est activé. Rechargez la page et vous aurez accès à tous les exercices et solutions pendant la durée de votre formule.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── FAQ ── -->
+    <div class="card">
+        <div class="card-header">
+            <div class="icon-wrap" style="background:#fef3c7;">❓</div>
+            <div>
+                <h2>Questions fréquentes</h2>
+                <p>Si vous avez un doute, la réponse est ici</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <strong>Je n'ai pas d'application Wave ou Orange Money. Comment faire ?</strong>
+            <span>Téléchargez <b>Wave</b> (gratuit sur Play Store / App Store) ou activez <b>Orange Money</b> en composant le <b>*144#</b> sur votre téléphone Orange. Les deux services sont gratuits à l'inscription.</span>
+        </div>
+
+        <div class="faq-item">
+            <strong>J'ai envoyé l'argent mais je n'ai pas fait de capture. Que faire ?</strong>
+            <span>Ouvrez votre appli Wave ou Orange Money, allez dans l'<b>historique des transactions</b> et trouvez l'envoi correspondant. Faites une capture d'écran depuis cet historique.</span>
+        </div>
+
+        <div class="faq-item">
+            <strong>Mon accès n'est toujours pas activé après 24h. Que faire ?</strong>
+            <span>Contactez l'administration directement. Vérifiez aussi que votre capture d'écran montre bien le montant, le numéro destinataire et la date de la transaction.</span>
+        </div>
+
+        <div class="faq-item">
+            <strong>Est-ce que mon abonnement se renouvelle automatiquement ?</strong>
+            <span>Non. À l'expiration, vous devrez refaire une demande. Vous serez notifié quand votre accès est sur le point d'expirer.</span>
+        </div>
+
+        <div class="faq-item">
+            <strong>Puis-je payer pour plusieurs mois d'un coup ?</strong>
+            <span>Oui ! Choisissez la formule <b>1 an (2 500 FCFA)</b> pour bénéficier du meilleur tarif. C'est l'équivalent de moins de 210 FCFA par mois.</span>
+        </div>
+    </div>
+
+    <!-- CTA retour -->
+    <a href="javascript:history.back()" class="cta-btn">
+        ← Retourner aux cours
+    </a>
+
+</div>
+</body>
+</html>
