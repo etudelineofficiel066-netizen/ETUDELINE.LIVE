@@ -75,6 +75,26 @@ async def add_security_headers(request: Request, call_next):
 # Mount static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+def _run_migrations():
+    """Ajoute les colonnes manquantes sans casser les données existantes."""
+    from database import engine
+    migrations = [
+        # Colonnes descriptions de fichiers (ajoutées après la mise en prod initiale)
+        "ALTER TABLE chapitres_complets ADD COLUMN IF NOT EXISTS cours_fichier_description VARCHAR(2000)",
+        "ALTER TABLE chapitres_complets ADD COLUMN IF NOT EXISTS exercice_fichier_description VARCHAR(2000)",
+        "ALTER TABLE chapitres_complets ADD COLUMN IF NOT EXISTS solution_fichier_description VARCHAR(2000)",
+        # Durée d'abonnement dans les demandes de paiement
+        "ALTER TABLE payment_requests ADD COLUMN IF NOT EXISTS duration_days INTEGER NOT NULL DEFAULT 365",
+    ]
+    with engine.connect() as conn:
+        for sql in migrations:
+            try:
+                conn.execute(text(sql))
+            except Exception as e:
+                print(f"⚠️ Migration ignorée ({e}): {sql[:60]}")
+        conn.commit()
+    print("✅ Migrations appliquées")
+
 # Initialize database on startup
 @app.on_event("startup")
 async def startup_event():
@@ -94,6 +114,7 @@ async def startup_event():
     try:
         create_tables()
         print("✅ Tables de base de données vérifiées")
+        _run_migrations()
         from database import SessionLocal
         db = SessionLocal()
         try:
