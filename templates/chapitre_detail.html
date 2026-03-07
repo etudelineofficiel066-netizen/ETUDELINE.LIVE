@@ -774,8 +774,8 @@
             </div>
 
             <!-- Modal Paiement Premium (partagé Exercices + Solutions) -->
-            <div id="modal-payment" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.65); z-index:9999; align-items:center; justify-content:center; padding:1rem;">
-                <div style="background:white; border-radius:20px; padding:0; max-width:480px; width:100%; position:relative; box-shadow:0 25px 60px rgba(0,0,0,0.35); overflow:hidden;">
+            <div id="modal-payment" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.65); z-index:9999; align-items:flex-start; justify-content:center; padding:1rem; overflow-y:auto;">
+                <div style="background:white; border-radius:20px; padding:0; max-width:480px; width:100%; position:relative; box-shadow:0 25px 60px rgba(0,0,0,0.35); overflow:hidden; margin:auto;">
                     <!-- Header modal -->
                     <div style="background:linear-gradient(135deg,#7C3AED 0%,#6366f1 100%); padding:1.5rem 2rem; color:white; text-align:center;">
                         <button onclick="closePaymentModal()"
@@ -790,16 +790,19 @@
                             <!-- Étape 1 : Méthode -->
                             <div style="margin-bottom:1.25rem;">
                                 <p style="font-weight:700; color:#111827; margin:0 0 0.6rem; font-size:0.95rem;">1. Choisissez votre méthode de paiement</p>
+                                <div id="method-error" style="display:none; color:#dc2626; font-size:0.82rem; margin-bottom:0.5rem; padding:0.4rem 0.75rem; background:#fef2f2; border-radius:8px; border:1px solid #fecaca;">
+                                    Veuillez sélectionner une méthode de paiement.
+                                </div>
                                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
                                     <label style="cursor:pointer;">
-                                        <input type="radio" name="payment_method" value="orange" required style="display:none;" onchange="selectMethod('orange')">
+                                        <input type="radio" name="payment_method" value="orange" style="display:none;" onchange="selectMethod('orange')">
                                         <div id="btn-orange" style="border:2px solid #e5e7eb; border-radius:12px; padding:0.85rem 0.5rem; text-align:center; transition:all 0.2s; background:white;">
                                             <div style="font-size:1.6rem; margin-bottom:0.25rem;">🟠</div>
                                             <strong style="font-size:0.85rem; color:#374151;">Orange Money</strong>
                                         </div>
                                     </label>
                                     <label style="cursor:pointer;">
-                                        <input type="radio" name="payment_method" value="wave" required style="display:none;" onchange="selectMethod('wave')">
+                                        <input type="radio" name="payment_method" value="wave" style="display:none;" onchange="selectMethod('wave')">
                                         <div id="btn-wave" style="border:2px solid #e5e7eb; border-radius:12px; padding:0.85rem 0.5rem; text-align:center; transition:all 0.2s; background:white;">
                                             <div style="font-size:1.6rem; margin-bottom:0.25rem;">🔵</div>
                                             <strong style="font-size:0.85rem; color:#374151;">Wave</strong>
@@ -821,22 +824,25 @@
                             <!-- Étape 3 : Upload preuve -->
                             <div style="margin-bottom:1.5rem;">
                                 <p style="font-weight:700; color:#111827; margin:0 0 0.6rem; font-size:0.95rem;">3. Joignez la capture d'écran du paiement</p>
+                                <div id="file-error" style="display:none; color:#dc2626; font-size:0.82rem; margin-bottom:0.5rem; padding:0.4rem 0.75rem; background:#fef2f2; border-radius:8px; border:1px solid #fecaca;">
+                                    Veuillez joindre une capture d'écran du paiement.
+                                </div>
                                 <label style="display:block; border:2px dashed #c4b5fd; border-radius:12px; padding:1rem; text-align:center; cursor:pointer; background:#faf5ff; transition:all 0.2s;" 
                                        onmouseover="this.style.borderColor='#7C3AED'" onmouseout="this.style.borderColor='#c4b5fd'">
-                                    <input type="file" name="proof_image" accept="image/*" required style="display:none;" onchange="previewProof(this)">
+                                    <input type="file" name="proof_image" id="proof-file-input" accept="image/*" style="display:none;" onchange="previewProof(this)">
                                     <div id="upload-placeholder">
                                         <div style="font-size:1.5rem; margin-bottom:0.3rem;">📸</div>
                                         <p style="margin:0; color:#7C3AED; font-weight:600; font-size:0.9rem;">Cliquez pour sélectionner</p>
                                         <p style="margin:0.2rem 0 0; color:#9ca3af; font-size:0.75rem;">JPG, PNG, WEBP — Max 5 Mo</p>
                                     </div>
                                     <div id="proof-preview" style="display:none;">
-                                        <img id="proof-img-preview" style="max-width:100%; border-radius:8px; max-height:160px; object-fit:contain;">
-                                        <p id="proof-filename" style="margin:0.5rem 0 0; color:#7C3AED; font-size:0.8rem; font-weight:600;"></p>
+                                        <img id="proof-img-preview" style="max-width:100%; border-radius:8px; max-height:260px; object-fit:contain; display:block; margin:0 auto;">
+                                        <p id="proof-filename" style="margin:0.5rem 0 0; color:#7C3AED; font-size:0.8rem; font-weight:600; word-break:break-all;"></p>
                                     </div>
                                 </label>
                             </div>
 
-                            <button type="submit" id="submit-payment-btn"
+                            <button type="button" id="submit-payment-btn" onclick="submitPaymentForm()"
                                     style="width:100%; background:linear-gradient(135deg,#7C3AED,#6366f1); color:white; border:none; padding:0.9rem; border-radius:12px; font-size:1rem; font-weight:700; cursor:pointer; box-shadow:0 4px 14px rgba(124,58,237,0.4); transition:all 0.2s;">
                                 📤 Envoyer ma demande
                             </button>
@@ -847,7 +853,9 @@
 
             <script>
                 function openPaymentModal() {
-                    document.getElementById('modal-payment').style.display = 'flex';
+                    const modal = document.getElementById('modal-payment');
+                    modal.style.display = 'flex';
+                    modal.scrollTop = 0;
                 }
                 function closePaymentModal() {
                     document.getElementById('modal-payment').style.display = 'none';
@@ -860,11 +868,13 @@
                         const el = document.getElementById('btn-'+m);
                         el.style.border = '2px solid #e5e7eb';
                         el.style.background = 'white';
+                        el.style.boxShadow = 'none';
                     });
                     const el = document.getElementById('btn-'+method);
                     el.style.border = '2px solid #7C3AED';
                     el.style.background = '#f5f3ff';
                     el.style.boxShadow = '0 0 0 3px rgba(124,58,237,0.15)';
+                    document.getElementById('method-error').style.display = 'none';
                 }
                 function previewProof(input) {
                     const preview = document.getElementById('proof-preview');
@@ -878,17 +888,31 @@
                             fname.textContent = input.files[0].name;
                             preview.style.display = 'block';
                             placeholder.style.display = 'none';
+                            document.getElementById('file-error').style.display = 'none';
                         };
                         reader.readAsDataURL(input.files[0]);
                     }
                 }
-                const pf = document.getElementById('payment-form');
-                if (pf) {
-                    pf.addEventListener('submit', function() {
-                        const btn = document.getElementById('submit-payment-btn');
-                        btn.disabled = true;
-                        btn.textContent = 'Envoi en cours...';
-                    });
+                function submitPaymentForm() {
+                    const form = document.getElementById('payment-form');
+                    const methodSelected = form.querySelector('input[name="payment_method"]:checked');
+                    const fileInput = document.getElementById('proof-file-input');
+                    let valid = true;
+
+                    if (!methodSelected) {
+                        document.getElementById('method-error').style.display = 'block';
+                        valid = false;
+                    }
+                    if (!fileInput.files || fileInput.files.length === 0) {
+                        document.getElementById('file-error').style.display = 'block';
+                        valid = false;
+                    }
+                    if (!valid) return;
+
+                    const btn = document.getElementById('submit-payment-btn');
+                    btn.disabled = true;
+                    btn.textContent = 'Envoi en cours...';
+                    form.submit();
                 }
             </script>
 
