@@ -574,7 +574,7 @@
                                 📎 {{ fichier_noms[i] }}
                             </div>
                             {% if i < (fichier_descs|length) and fichier_descs[i]|trim %}
-                            <div style="font-size: 0.82rem; color: #4a7a4a; margin: 3px 0 8px 0; padding: 4px 8px; background: rgba(46,125,50,0.08); border-radius: 5px; border-left: 3px solid #66bb6a;">{{ fichier_descs[i]|trim }}</div>
+                            <div class="content-text" style="margin: 6px 0 10px 0;">{{ fichier_descs[i]|trim }}</div>
                             {% endif %}
                             <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                                 <a href="/lecteur/{{ fichier_paths[i] }}" 
@@ -684,7 +684,7 @@
                                     📎 {{ fichier_noms[i] }}
                                 </div>
                                 {% if i < (fichier_descs|length) and fichier_descs[i]|trim %}
-                                <div style="font-size: 0.82rem; color: #7a5a00; margin: 3px 0 8px 0; padding: 4px 8px; background: rgba(245,124,0,0.08); border-radius: 5px; border-left: 3px solid #ffb300;">{{ fichier_descs[i]|trim }}</div>
+                                <div class="content-text" style="margin: 6px 0 10px 0;">{{ fichier_descs[i]|trim }}</div>
                                 {% endif %}
                                 <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                                     <a href="/lecteur/{{ fichier_paths[i] }}" 
@@ -796,7 +796,7 @@
                                     📎 {{ fichier_noms[i] }}
                                 </div>
                                 {% if i < (fichier_descs|length) and fichier_descs[i]|trim %}
-                                <div style="font-size: 0.82rem; color: #1a4a7a; margin: 3px 0 8px 0; padding: 4px 8px; background: rgba(25,118,210,0.08); border-radius: 5px; border-left: 3px solid #64b5f6;">{{ fichier_descs[i]|trim }}</div>
+                                <div class="content-text" style="margin: 6px 0 10px 0;">{{ fichier_descs[i]|trim }}</div>
                                 {% endif %}
                                 <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                                     <a href="/lecteur/{{ fichier_paths[i] }}" 
