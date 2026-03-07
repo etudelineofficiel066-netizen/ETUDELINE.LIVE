@@ -567,11 +567,15 @@
                     {% if chapitre.cours_fichier_nom %}
                         {% set fichier_noms = chapitre.cours_fichier_nom.split('|||') %}
                         {% set fichier_paths = chapitre.cours_fichier_path.split('|||') %}
+                        {% set fichier_descs = (chapitre.cours_fichier_description or '').split('|||') %}
                         {% for i in range(fichier_noms|length) %}
                         <div class="file-container" style="margin-bottom: 12px; padding: 10px; background: #f1f8e9; border-radius: 8px; border: 2px solid #c8e6c9;">
-                            <div class="file-name" style="color: #2e7d32; font-weight: 600; margin-bottom: 8px; font-size: 0.9rem;">
+                            <div class="file-name" style="color: #2e7d32; font-weight: 600; margin-bottom: 4px; font-size: 0.9rem;">
                                 📎 {{ fichier_noms[i] }}
                             </div>
+                            {% if i < (fichier_descs|length) and fichier_descs[i]|trim %}
+                            <div style="font-size: 0.82rem; color: #4a7a4a; margin: 3px 0 8px 0; padding: 4px 8px; background: rgba(46,125,50,0.08); border-radius: 5px; border-left: 3px solid #66bb6a;">{{ fichier_descs[i]|trim }}</div>
+                            {% endif %}
                             <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                                 <a href="/lecteur/{{ fichier_paths[i] }}" 
                                    style="background: #4caf50; color: white; padding: 6px 14px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 6px; transition: all 0.3s;">
@@ -673,11 +677,15 @@
                         {% if chapitre.exercice_fichier_nom %}
                             {% set fichier_noms = chapitre.exercice_fichier_nom.split('|||') %}
                             {% set fichier_paths = chapitre.exercice_fichier_path.split('|||') %}
+                            {% set fichier_descs = (chapitre.exercice_fichier_description or '').split('|||') %}
                             {% for i in range(fichier_noms|length) %}
                             <div class="file-container" style="margin-bottom: 12px; padding: 10px; background: #fffde7; border-radius: 8px; border: 2px solid #fff176;">
-                                <div class="file-name" style="color: #f57c00; font-weight: 600; margin-bottom: 8px; font-size: 0.9rem;">
+                                <div class="file-name" style="color: #f57c00; font-weight: 600; margin-bottom: 4px; font-size: 0.9rem;">
                                     📎 {{ fichier_noms[i] }}
                                 </div>
+                                {% if i < (fichier_descs|length) and fichier_descs[i]|trim %}
+                                <div style="font-size: 0.82rem; color: #7a5a00; margin: 3px 0 8px 0; padding: 4px 8px; background: rgba(245,124,0,0.08); border-radius: 5px; border-left: 3px solid #ffb300;">{{ fichier_descs[i]|trim }}</div>
+                                {% endif %}
                                 <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                                     <a href="/lecteur/{{ fichier_paths[i] }}" 
                                        style="background: #ff9800; color: white; padding: 6px 14px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 6px; transition: all 0.3s;">
@@ -781,11 +789,15 @@
                         {% if chapitre.solution_fichier_nom %}
                             {% set fichier_noms = chapitre.solution_fichier_nom.split('|||') %}
                             {% set fichier_paths = chapitre.solution_fichier_path.split('|||') %}
+                            {% set fichier_descs = (chapitre.solution_fichier_description or '').split('|||') %}
                             {% for i in range(fichier_noms|length) %}
                             <div class="file-container" style="margin-bottom: 12px; padding: 10px; background: #e8f4fd; border-radius: 8px; border: 2px solid #90caf9;">
-                                <div class="file-name" style="color: #1976d2; font-weight: 600; margin-bottom: 8px; font-size: 0.9rem;">
+                                <div class="file-name" style="color: #1976d2; font-weight: 600; margin-bottom: 4px; font-size: 0.9rem;">
                                     📎 {{ fichier_noms[i] }}
                                 </div>
+                                {% if i < (fichier_descs|length) and fichier_descs[i]|trim %}
+                                <div style="font-size: 0.82rem; color: #1a4a7a; margin: 3px 0 8px 0; padding: 4px 8px; background: rgba(25,118,210,0.08); border-radius: 5px; border-left: 3px solid #64b5f6;">{{ fichier_descs[i]|trim }}</div>
+                                {% endif %}
                                 <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                                     <a href="/lecteur/{{ fichier_paths[i] }}" 
                                        style="background: #2196f3; color: white; padding: 6px 14px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 6px; transition: all 0.3s;">
