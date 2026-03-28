@@ -1,0 +1,21 @@
+kind = "web"
+previewPath = "/"
+title = "Étude LINE"
+version = "1.0.0"
+id = "artifacts/etudeline-web"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 5000
+
+[services.development]
+run = "cd artifacts/etudeline && python -m uvicorn main:app --host 0.0.0.0 --port 5000"
+
+[services.env]
+PORT = "5000"

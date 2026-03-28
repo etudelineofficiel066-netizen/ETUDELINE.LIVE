@@ -1,0 +1,13 @@
+kind = "web"
+previewPath = "/"
+title = "Étude LINE"
+version = "1.0.0"
+id = "etudeline-app"
+
+[[services]]
+localPort = 5000
+name = "Étude LINE"
+paths = ["/"]
+
+[services.development]
+run = "cd artifacts/etudeline && python -m uvicorn main:app --host 0.0.0.0 --port 5000"
