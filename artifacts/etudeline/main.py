@@ -5700,23 +5700,35 @@ async def upload_document_etudiant(
         with open(file_path, "wb") as f:
             f.write(content_bytes)
 
-        # Nettoyer matiere_id et vérifier qu'elle existe bien en base
+        # --- Validation de toutes les clés étrangères avant insertion ---
+        from sqlalchemy import text as sa_text
+
+        # matiere_id
         matiere_id_clean = matiere_id.strip() if matiere_id and matiere_id.strip() else None
         matiere_obj = None
         if matiere_id_clean:
             matiere_obj = db.query(MatiereDB).filter_by(id=matiere_id_clean).first()
             if not matiere_obj:
-                # La matière n'existe pas : on la ignore plutôt que de planter
-                matiere_id_clean = None
+                matiere_id_clean = None  # ignorée si introuvable
 
-        # Vérifier que ufr_id et filiere_id de l'étudiant existent (sécurité FK)
-        from sqlalchemy import text as sa_text
+        # universite_id (obligatoire - ne peut pas être None)
+        universite_id_clean = etudiant.universite_id
+        if universite_id_clean:
+            exists = db.execute(sa_text("SELECT 1 FROM universites WHERE id = :id"), {"id": universite_id_clean}).first()
+            if not exists:
+                print(f"⚠️ Upload doc: universite_id '{universite_id_clean}' introuvable pour etudiant {etudiant.id}")
+                # universite_id est obligatoire, on garde la valeur mais sans FK enforcement
+                # (l'erreur sera gérée par l'except ci-dessous si elle persiste)
+
+        # ufr_id (optionnel)
         ufr_id_clean = etudiant.ufr_id
-        filiere_id_clean = etudiant.filiere_id
         if ufr_id_clean:
             exists = db.execute(sa_text("SELECT 1 FROM ufrs WHERE id = :id"), {"id": ufr_id_clean}).first()
             if not exists:
                 ufr_id_clean = None
+
+        # filiere_id (optionnel)
+        filiere_id_clean = etudiant.filiere_id
         if filiere_id_clean:
             exists = db.execute(sa_text("SELECT 1 FROM filieres WHERE id = :id"), {"id": filiere_id_clean}).first()
             if not exists:
@@ -5733,7 +5745,7 @@ async def upload_document_etudiant(
 
         new_doc = DocumentEtudiantDB(
             etudiant_id=etudiant.id,
-            universite_id=etudiant.universite_id,
+            universite_id=universite_id_clean,
             ufr_id=ufr_id_clean,
             filiere_id=filiere_id_clean,
             matiere_id=matiere_id_clean,
@@ -5755,17 +5767,24 @@ async def upload_document_etudiant(
         raise
     except Exception as e:
         db.rollback()
-        print(f"❌ Erreur upload document: {str(e)}")
+        # Log complet pour diagnostic (visible dans les logs serveur)
+        import traceback
+        print(f"❌ Erreur upload document [{type(e).__name__}]: {str(e)}")
+        print(traceback.format_exc())
         # Message d'erreur clair pour l'utilisateur (sans SQL brut)
         err_str = str(e).lower()
         if "column" in err_str and "does not exist" in err_str:
             msg = "Erreur de base de données : colonnes manquantes. Contactez l'administrateur."
-        elif "foreign key" in err_str or "violates" in err_str:
-            msg = "Erreur de validation : une référence est invalide. Vérifiez les données saisies."
-        elif "null value" in err_str or "not null" in err_str:
+        elif "not-null constraint" in err_str or "null value in column" in err_str:
             msg = "Un champ obligatoire est manquant. Veuillez remplir tous les champs requis."
+        elif "foreign key" in err_str or "violates foreign key" in err_str:
+            msg = "Erreur de liaison : une donnée associée est introuvable. Réessayez ou contactez l'administrateur."
+        elif "violates" in err_str:
+            msg = "Erreur de contrainte base de données. Veuillez réessayer."
         elif "permission" in err_str or "denied" in err_str:
             msg = "Permission refusée. Contactez l'administrateur."
+        elif "disk" in err_str or "space" in err_str or "quota" in err_str:
+            msg = "Espace de stockage insuffisant sur le serveur."
         else:
             msg = "Erreur lors de l'enregistrement du document. Veuillez réessayer."
         return JSONResponse({"success": False, "error": msg}, status_code=500)
