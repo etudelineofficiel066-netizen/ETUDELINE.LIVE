@@ -134,6 +134,21 @@ def _migrate_documents_etudiants(db: Session):
                 db.rollback()
                 print(f"⚠️ Migration colonne '{col}': {e}")
 
+    # --- Alignement des contraintes : rendre nullable les colonnes qui ont changé ---
+    # "titre" est une ancienne colonne legacy — la rendre nullable pour éviter les erreurs d'INSERT
+    # "ufr_id", "filiere_id", "universite_id", "niveau" peuvent être NULL selon le modèle actuel
+    nullable_fixes = ["titre", "ufr_id", "filiere_id", "universite_id", "niveau"]
+    for col in nullable_fixes:
+        if col in existing_names:
+            try:
+                db.execute(text(f'ALTER TABLE documents_etudiants ALTER COLUMN "{col}" DROP NOT NULL'))
+                db.commit()
+                print(f"✅ Migration: contrainte NOT NULL supprimée sur '{col}'")
+            except Exception as e:
+                db.rollback()
+                # Peut échouer si la colonne est déjà nullable — sans gravité
+                print(f"ℹ️ Migration nullable '{col}': {e}")
+
 
 # Initialize database on startup
 @app.on_event("startup")
