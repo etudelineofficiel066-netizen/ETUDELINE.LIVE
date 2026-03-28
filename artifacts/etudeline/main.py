@@ -82,7 +82,9 @@ async def add_security_headers(request: Request, call_next):
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 def _migrate_documents_etudiants(db: Session):
-    """Migration : s'assure que toutes les colonnes de documents_etudiants existent."""
+    """Migration : s'assure que toutes les colonnes de documents_etudiants existent.
+    Chaque colonne est ajoutée dans sa propre transaction pour éviter les rollbacks en cascade.
+    """
     from sqlalchemy import text
     needed_columns = {
         "nom_affichage":  "VARCHAR(255) NOT NULL DEFAULT ''",
@@ -99,19 +101,38 @@ def _migrate_documents_etudiants(db: Session):
         "semestre":       "VARCHAR(10)",
         "updated_at":     "TIMESTAMP WITHOUT TIME ZONE",
     }
+    # Vérifier si la table existe d'abord
+    try:
+        result = db.execute(text(
+            "SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name='documents_etudiants')"
+        )).scalar()
+        if not result:
+            print("⚠️ Migration: table documents_etudiants inexistante, sera créée par create_tables()")
+            return
+    except Exception as e:
+        print(f"⚠️ Migration check table: {e}")
+        return
+
+    # Récupérer les colonnes existantes
     try:
         existing = db.execute(text(
             "SELECT column_name FROM information_schema.columns WHERE table_name='documents_etudiants'"
         )).fetchall()
         existing_names = {row[0] for row in existing}
-        for col, col_type in needed_columns.items():
-            if col not in existing_names:
-                db.execute(text(f'ALTER TABLE documents_etudiants ADD COLUMN IF NOT EXISTS "{col}" {col_type}'))
-                print(f"✅ Migration: colonne '{col}' ajoutée à documents_etudiants")
-        db.commit()
     except Exception as e:
-        db.rollback()
-        print(f"⚠️ Migration documents_etudiants: {e}")
+        print(f"⚠️ Migration: impossible de lire les colonnes: {e}")
+        return
+
+    # Ajouter chaque colonne manquante dans une transaction séparée
+    for col, col_type in needed_columns.items():
+        if col not in existing_names:
+            try:
+                db.execute(text(f'ALTER TABLE documents_etudiants ADD COLUMN IF NOT EXISTS "{col}" {col_type}'))
+                db.commit()
+                print(f"✅ Migration: colonne '{col}' ajoutée à documents_etudiants")
+            except Exception as e:
+                db.rollback()
+                print(f"⚠️ Migration colonne '{col}': {e}")
 
 
 # Initialize database on startup
@@ -5718,7 +5739,19 @@ async def upload_document_etudiant(
     except Exception as e:
         db.rollback()
         print(f"❌ Erreur upload document: {str(e)}")
-        return JSONResponse({"success": False, "error": str(e)}, status_code=500)
+        # Message d'erreur clair pour l'utilisateur (sans SQL brut)
+        err_str = str(e).lower()
+        if "column" in err_str and "does not exist" in err_str:
+            msg = "Erreur de base de données : colonnes manquantes. Contactez l'administrateur."
+        elif "foreign key" in err_str or "violates" in err_str:
+            msg = "Erreur de validation : une référence est invalide. Vérifiez les données saisies."
+        elif "null value" in err_str or "not null" in err_str:
+            msg = "Un champ obligatoire est manquant. Veuillez remplir tous les champs requis."
+        elif "permission" in err_str or "denied" in err_str:
+            msg = "Permission refusée. Contactez l'administrateur."
+        else:
+            msg = "Erreur lors de l'enregistrement du document. Veuillez réessayer."
+        return JSONResponse({"success": False, "error": msg}, status_code=500)
 
 
 @app.put("/api/etudiant/document/{doc_id}/rename")
