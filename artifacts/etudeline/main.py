@@ -5700,25 +5700,42 @@ async def upload_document_etudiant(
         with open(file_path, "wb") as f:
             f.write(content_bytes)
 
-        # Nettoyer matiere_id
+        # Nettoyer matiere_id et vérifier qu'elle existe bien en base
         matiere_id_clean = matiere_id.strip() if matiere_id and matiere_id.strip() else None
+        matiere_obj = None
+        if matiere_id_clean:
+            matiere_obj = db.query(MatiereDB).filter_by(id=matiere_id_clean).first()
+            if not matiere_obj:
+                # La matière n'existe pas : on la ignore plutôt que de planter
+                matiere_id_clean = None
 
-        # Derive niveau/semestre from matiere if not provided
+        # Vérifier que ufr_id et filiere_id de l'étudiant existent (sécurité FK)
+        from sqlalchemy import text as sa_text
+        ufr_id_clean = etudiant.ufr_id
+        filiere_id_clean = etudiant.filiere_id
+        if ufr_id_clean:
+            exists = db.execute(sa_text("SELECT 1 FROM ufrs WHERE id = :id"), {"id": ufr_id_clean}).first()
+            if not exists:
+                ufr_id_clean = None
+        if filiere_id_clean:
+            exists = db.execute(sa_text("SELECT 1 FROM filieres WHERE id = :id"), {"id": filiere_id_clean}).first()
+            if not exists:
+                filiere_id_clean = None
+
+        # Dériver niveau/semestre depuis la matière si non fournis
         niveau_clean = niveau.strip() if niveau and niveau.strip() else None
         semestre_clean = semestre.strip() if semestre and semestre.strip() else None
-        if matiere_id_clean and (not niveau_clean or not semestre_clean):
-            matiere_obj = db.query(MatiereDB).filter_by(id=matiere_id_clean).first()
-            if matiere_obj:
-                if not niveau_clean:
-                    niveau_clean = matiere_obj.niveau
-                if not semestre_clean:
-                    semestre_clean = matiere_obj.semestre
+        if matiere_obj:
+            if not niveau_clean:
+                niveau_clean = matiere_obj.niveau
+            if not semestre_clean:
+                semestre_clean = matiere_obj.semestre
 
         new_doc = DocumentEtudiantDB(
             etudiant_id=etudiant.id,
             universite_id=etudiant.universite_id,
-            ufr_id=etudiant.ufr_id,
-            filiere_id=etudiant.filiere_id,
+            ufr_id=ufr_id_clean,
+            filiere_id=filiere_id_clean,
             matiere_id=matiere_id_clean,
             niveau=niveau_clean,
             semestre=semestre_clean,
