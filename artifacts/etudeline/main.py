@@ -6081,9 +6081,13 @@ async def admin_get_documents_etudiants(
                 "etudiant_nom": f"{etudiant.prenom} {etudiant.nom}" if etudiant else "Inconnu",
                 "etudiant_username": etudiant.username if etudiant else "",
                 "matiere_nom": matiere_obj.nom if matiere_obj else None,
+                "filiere_id": doc.filiere_id,
                 "filiere_nom": filiere_obj.nom if filiere_obj else None,
                 "ufr_nom": ufr_obj.nom if ufr_obj else None,
+                "universite_id": doc.universite_id,
                 "universite_nom": universite_obj.nom if universite_obj else None,
+                "niveau": doc.niveau,
+                "semestre": doc.semestre,
             })
 
         return {"documents": result, "total": len(result)}
@@ -6113,6 +6117,33 @@ async def admin_view_document(doc_id: int, request: Request, db: Session = Depen
 
         return FileResponse(path=str(file_path), media_type=mime_type,
                             headers={"Content-Disposition": "inline"})
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/admin/document/{doc_id}/lecteur")
+async def admin_ouvrir_document_lecteur(doc_id: int, request: Request, db: Session = Depends(get_db)):
+    """Admin : ouvrir un document dans le lecteur intégré"""
+    try:
+        require_admin(request, db)
+        doc = db.query(DocumentEtudiantDB).filter_by(id=doc_id).first()
+        if not doc:
+            raise HTTPException(status_code=404, detail="Document introuvable")
+
+        file_path = Path(doc.fichier_path)
+        if not file_path.exists():
+            raise HTTPException(status_code=404, detail="Fichier non trouvé sur le serveur")
+
+        try:
+            uploads_resolved = UPLOADS_DIR.resolve()
+            file_resolved = file_path.resolve()
+            rel_path = file_resolved.relative_to(uploads_resolved).as_posix()
+        except ValueError:
+            rel_path = file_path.name
+
+        return RedirectResponse(url=f"/lecteur/{rel_path}", status_code=302)
     except HTTPException:
         raise
     except Exception as e:
