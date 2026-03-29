@@ -5941,6 +5941,39 @@ async def view_document_etudiant(doc_id: int, request: Request, db: Session = De
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@app.get("/etudiant/document/{doc_id}/lecteur")
+async def ouvrir_document_etudiant_lecteur(doc_id: int, request: Request, db: Session = Depends(get_db)):
+    """Redirige vers le lecteur intégré pour un document étudiant"""
+    try:
+        etudiant_username, _ = require_etudiant(request, db)
+        etudiant = db.query(EtudiantDB).filter_by(username=etudiant_username).first()
+        if not etudiant:
+            raise HTTPException(status_code=403, detail="Non autorisé")
+
+        doc = db.query(DocumentEtudiantDB).filter_by(id=doc_id, etudiant_id=etudiant.id).first()
+        if not doc:
+            raise HTTPException(status_code=404, detail="Document introuvable")
+
+        file_path = Path(doc.fichier_path)
+        if not file_path.exists():
+            raise HTTPException(status_code=404, detail="Fichier non trouvé sur le serveur")
+
+        # Calculer le chemin relatif par rapport à UPLOADS_DIR pour le lecteur
+        try:
+            uploads_resolved = UPLOADS_DIR.resolve()
+            file_resolved = file_path.resolve()
+            rel_path = file_resolved.relative_to(uploads_resolved).as_posix()
+        except ValueError:
+            # Si le fichier est hors de UPLOADS_DIR, utiliser le nom de fichier seulement
+            rel_path = file_path.name
+
+        return RedirectResponse(url=f"/lecteur/{rel_path}", status_code=302)
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 # --- Page Mes Documents ---
 
 @app.get("/etudiant/mes-documents", response_class=HTMLResponse)

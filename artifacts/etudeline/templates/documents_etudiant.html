@@ -684,10 +684,11 @@ function renderDocCard(doc, typeColor) {
     const descHtml  = doc.description
         ? `<div class="doc-desc" title="${escAttr(doc.description)}">${escHtml(doc.description)}</div>` : '';
 
+    const lecteurUrl = `/etudiant/document/${doc.id}/lecteur`;
     return `<div class="doc-card">
-        <div class="doc-icon-wrap" style="background:${color}15;" onclick="openViewer(${doc.id},'${escJs(doc.nom_affichage)}','${ext}')">
+        <div class="doc-icon-wrap" style="background:${color}15; cursor:pointer;" onclick="window.location.href='${lecteurUrl}'">
             <div class="doc-icon">${icon}</div>
-            <div class="doc-preview-hint" style="color:${color};">${canPreview ? '👁 Ouvrir' : '📦 Fichier'}</div>
+            <div class="doc-preview-hint" style="color:${color};">👁 Ouvrir</div>
         </div>
         <div class="doc-info">
             <div class="doc-name" title="${escAttr(doc.nom_affichage)}">${escHtml(doc.nom_affichage)}</div>
@@ -695,7 +696,7 @@ function renderDocCard(doc, typeColor) {
             <div class="doc-meta">${fmtDate(doc.created_at)}${doc.taille ? ' · ' + fmtSize(doc.taille) : ''}</div>
         </div>
         <div class="doc-actions">
-            ${canPreview ? `<button class="btn-act btn-view" onclick="openViewer(${doc.id},'${escJs(doc.nom_affichage)}','${ext}')" title="Ouvrir">👁</button>` : ''}
+            <a class="btn-act btn-view" href="${lecteurUrl}" title="Ouvrir dans le lecteur">👁</a>
             <a class="btn-act btn-dl" href="/etudiant/document/${doc.id}/download" title="Télécharger">⬇</a>
             <button class="btn-act btn-edit" onclick="openEditModal(${doc.id},'${escJs(doc.nom_affichage)}','${escJs(doc.type_document||'')}','${escJs(doc.description||'')}','${escJs(doc.matiere_id||'')}','${escJs(doc.niveau||'')}','${escJs(doc.semestre||'')}')" title="Modifier">✏</button>
             <button class="btn-act btn-del" onclick="deleteDoc(${doc.id},'${escJs(doc.nom_affichage)}')" title="Supprimer">🗑</button>
