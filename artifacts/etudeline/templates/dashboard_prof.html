@@ -1880,15 +1880,116 @@
                 </form>
             </div>
             
+            <!-- ═══════════════════════════════════════════════════════════
+                 FORMULAIRE CRÉATION EN LOT
+            ═══════════════════════════════════════════════════════════ -->
+            <div class="card" id="formulaire-lot" style="display:none; border: 2px solid #6366f1; border-radius: 16px;">
+
+                <!-- En-tête -->
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; padding-bottom:1rem; border-bottom:2px solid #e9ecef;">
+                    <div>
+                        <h3 style="margin:0; color:#4338ca; font-size:1.3rem;">📚 Création de chapitres en lot</h3>
+                        <p style="margin:0.3rem 0 0; color:#6b7280; font-size:0.88rem;">Configurez le contexte commun, ajoutez vos chapitres puis créez-les tous en un clic.</p>
+                    </div>
+                    <button onclick="closeBatchMode()" style="background:#f44336; color:white; border:none; padding:0.5rem 1rem; border-radius:8px; cursor:pointer; font-weight:600;">✕ Fermer</button>
+                </div>
+
+                <!-- ─── CONTEXTE COMMUN ─── -->
+                <div style="background:linear-gradient(135deg,#f0f4ff,#e8eaff); border:1px solid #c7d2fe; border-radius:12px; padding:1.5rem; margin-bottom:1.5rem;">
+                    <h4 style="margin:0 0 1rem; color:#4338ca; display:flex; align-items:center; gap:0.5rem;">
+                        <span>⚙️</span> Contexte commun <small style="font-weight:400; color:#6b7280; font-size:0.8rem; margin-left:0.5rem;">— valable pour tous les chapitres de ce lot</small>
+                    </h4>
+                    {% if universites and universites|length > 0 %}
+                    <input type="hidden" id="batch-universite" value="{{ universites[0].id }}">
+                    {% endif %}
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+                        <div class="form-group" style="margin:0;">
+                            <label style="font-size:0.85rem; font-weight:600; color:#374151;">UFR affectée</label>
+                            <select id="batch-ufr" onchange="batchLoadFilieres()" style="width:100%; padding:0.5rem; border:1px solid #c7d2fe; border-radius:8px; background:white;" required>
+                                <option value="">Sélectionner une UFR</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin:0;">
+                            <label style="font-size:0.85rem; font-weight:600; color:#374151;">Filière</label>
+                            <select id="batch-filiere" onchange="batchLoadMatieres()" disabled style="width:100%; padding:0.5rem; border:1px solid #c7d2fe; border-radius:8px; background:white;" required>
+                                <option value="">Sélectionner d'abord une UFR</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin:0;">
+                            <label style="font-size:0.85rem; font-weight:600; color:#374151;">Niveau</label>
+                            <select id="batch-niveau" onchange="batchLoadMatieres()" style="width:100%; padding:0.5rem; border:1px solid #c7d2fe; border-radius:8px; background:white;" required>
+                                <option value="">Sélectionner</option>
+                                <option value="L1">🎓 Licence 1 (L1)</option>
+                                <option value="L2">📚 Licence 2 (L2)</option>
+                                <option value="L3">🎯 Licence 3 (L3)</option>
+                                <option value="M1">🔬 Master 1 (M1)</option>
+                                <option value="M2">🏆 Master 2 (M2)</option>
+                                <option value="BTS1">🎓 BTS 1</option>
+                                <option value="BTS2">🎓 BTS 2</option>
+                                <option value="BTS3">🎓 BTS 3</option>
+                                <option value="BTS4">🎓 BTS 4</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin:0;">
+                            <label style="font-size:0.85rem; font-weight:600; color:#374151;">Semestre</label>
+                            <select id="batch-semestre" onchange="batchLoadMatieres()" style="width:100%; padding:0.5rem; border:1px solid #c7d2fe; border-radius:8px; background:white;" required>
+                                <option value="">Sélectionner</option>
+                                <option value="S1">Semestre 1 (S1)</option>
+                                <option value="S2">Semestre 2 (S2)</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin:0; grid-column:1/-1;">
+                            <label style="font-size:0.85rem; font-weight:600; color:#374151;">Matière</label>
+                            <select id="batch-matiere" disabled style="width:100%; padding:0.5rem; border:1px solid #c7d2fe; border-radius:8px; background:white;" required>
+                                <option value="">Sélectionner filière, niveau et semestre d'abord</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ─── BARRE DE PROGRESSION ─── -->
+                <div id="batch-progress-zone" style="display:none; margin-bottom:1.5rem;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+                        <span style="font-weight:600; color:#374151;" id="batch-progress-label">Progression…</span>
+                        <span style="font-size:0.85rem; color:#6b7280;" id="batch-progress-stats"></span>
+                    </div>
+                    <div style="background:#e5e7eb; border-radius:999px; height:10px; overflow:hidden;">
+                        <div id="batch-progress-bar" style="height:100%; width:0%; background:linear-gradient(90deg,#6366f1,#8b5cf6); border-radius:999px; transition:width 0.4s ease;"></div>
+                    </div>
+                </div>
+
+                <!-- ─── LISTE DES CHAPITRES ─── -->
+                <div id="batch-chapters-list" style="display:flex; flex-direction:column; gap:0.75rem; margin-bottom:1.5rem;"></div>
+
+                <!-- ─── ACTIONS ─── -->
+                <div style="display:flex; flex-wrap:wrap; gap:1rem; align-items:center;">
+                    <button onclick="addBatchChapter()" id="batch-add-btn"
+                            style="background:white; color:#6366f1; border:2px dashed #6366f1; padding:0.65rem 1.4rem; border-radius:10px; font-weight:600; cursor:pointer; font-size:0.95rem; display:flex; align-items:center; gap:0.5rem; transition:all 0.2s;">
+                        ➕ Ajouter un chapitre
+                    </button>
+                    <button onclick="submitBatch()" id="batch-submit-btn"
+                            style="background:linear-gradient(135deg,#4338ca,#6366f1); color:white; border:none; padding:0.65rem 1.8rem; border-radius:10px; font-weight:700; cursor:pointer; font-size:0.95rem; display:flex; align-items:center; gap:0.5rem; box-shadow:0 4px 14px rgba(99,102,241,0.4); transition:all 0.2s;">
+                        🚀 Créer tous les chapitres
+                    </button>
+                    <span id="batch-chapter-count" style="color:#6b7280; font-size:0.88rem;"></span>
+                </div>
+            </div>
+
             <!-- Liste des chapitres complets hiérarchique -->
             <div class="card">
                 <!-- Boutons d'actions -->
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
                     <button onclick="toggleFormulaireChapitre()" 
                             class="btn-create-chapitre"
                             style="width: 100%; background: linear-gradient(135deg, #8b5cf6, #6366f1); color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 8px; font-size: 0.95rem; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3); transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
                         <span style="font-size: 1.1rem;">➕</span>
                         <span>Créer un chapitre</span>
+                    </button>
+
+                    <button onclick="openBatchMode()"
+                            style="width: 100%; background: linear-gradient(135deg, #4338ca, #6366f1); color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 8px; font-size: 0.95rem; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35); transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                        <span style="font-size: 1.1rem;">📚</span>
+                        <span>Créer en lot</span>
                     </button>
                     
                     <a href="/messages" 
@@ -3740,6 +3841,396 @@
         window.startVoiceRecording = startVoiceRecording;
         window.stopVoiceRecording = stopVoiceRecording;
         window.cancelVoiceRecording = cancelVoiceRecording;
+
+        /* ═══════════════════════════════════════════════════════════════
+           CRÉATION EN LOT — logique complète
+        ═══════════════════════════════════════════════════════════════ */
+        (function() {
+            let batchIndex = 0;
+
+            /* ── Ouvrir / fermer le panneau ── */
+            window.openBatchMode = function() {
+                const lot = document.getElementById('formulaire-lot');
+                const single = document.getElementById('formulaire-chapitre');
+                if (single) single.style.display = 'none';
+                lot.style.display = 'block';
+                lot.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                batchInitUFRs();
+                if (document.getElementById('batch-chapters-list').children.length === 0) {
+                    addBatchChapter();
+                }
+            };
+
+            window.closeBatchMode = function() {
+                document.getElementById('formulaire-lot').style.display = 'none';
+            };
+
+            /* ── Charger les UFR du prof ── */
+            async function batchInitUFRs() {
+                const ufrSel = document.getElementById('batch-ufr');
+                if (!ufrSel || ufrSel.options.length > 1) return;
+                try {
+                    const univId = document.getElementById('batch-universite')?.value;
+                    if (!univId) return;
+                    const resp = await fetch(`/api/ufrs/${univId}`);
+                    const data = await resp.json();
+                    ufrSel.innerHTML = '<option value="">Sélectionner une UFR</option>';
+                    (data.ufrs || []).forEach(u => {
+                        const o = document.createElement('option');
+                        o.value = u.id; o.textContent = u.nom;
+                        ufrSel.appendChild(o);
+                    });
+                } catch(e) { console.error('Erreur UFR batch:', e); }
+            }
+
+            /* ── Cascade UFR → filières ── */
+            window.batchLoadFilieres = async function() {
+                const ufrId = document.getElementById('batch-ufr').value;
+                const filSel = document.getElementById('batch-filiere');
+                const matSel = document.getElementById('batch-matiere');
+                filSel.innerHTML = '<option value="">Chargement…</option>';
+                filSel.disabled = true;
+                matSel.innerHTML = '<option value="">Sélectionner filière, niveau et semestre</option>';
+                matSel.disabled = true;
+                if (!ufrId) {
+                    filSel.innerHTML = '<option value="">Sélectionner d\'abord une UFR</option>';
+                    return;
+                }
+                try {
+                    const resp = await fetch(`/api/filieres/${ufrId}`);
+                    const data = await resp.json();
+                    filSel.innerHTML = '<option value="">Sélectionner une filière</option>';
+                    (data.filieres || []).forEach(f => {
+                        const o = document.createElement('option');
+                        o.value = f.id; o.textContent = f.nom;
+                        filSel.appendChild(o);
+                    });
+                    filSel.disabled = false;
+                } catch(e) {
+                    filSel.innerHTML = '<option value="">Erreur de chargement</option>';
+                }
+            };
+
+            /* ── Cascade filière + niveau + semestre → matières ── */
+            window.batchLoadMatieres = async function() {
+                const filId  = document.getElementById('batch-filiere').value;
+                const niveau = document.getElementById('batch-niveau').value;
+                const sem    = document.getElementById('batch-semestre').value;
+                const matSel = document.getElementById('batch-matiere');
+                if (!filId || !niveau || !sem) {
+                    matSel.innerHTML = '<option value="">Sélectionner filière, niveau et semestre</option>';
+                    matSel.disabled = true;
+                    return;
+                }
+                matSel.innerHTML = '<option value="">Chargement…</option>';
+                matSel.disabled = true;
+                try {
+                    const resp = await fetch(`/api/matieres/${filId}?niveau=${niveau}&semestre=${sem}`);
+                    const data = await resp.json();
+                    matSel.innerHTML = '<option value="">Sélectionner une matière</option>';
+                    (data.matieres || []).forEach(m => {
+                        const o = document.createElement('option');
+                        o.value = m.id; o.textContent = m.nom;
+                        matSel.appendChild(o);
+                    });
+                    matSel.disabled = false;
+                } catch(e) {
+                    matSel.innerHTML = '<option value="">Erreur de chargement</option>';
+                }
+            };
+
+            /* ── Ajouter une carte chapitre ── */
+            window.addBatchChapter = function() {
+                const idx = batchIndex++;
+                const list = document.getElementById('batch-chapters-list');
+                const card = document.createElement('div');
+                card.className = 'batch-chapter-card';
+                card.dataset.idx = idx;
+                card.style.cssText = 'border:1.5px solid #e5e7eb; border-radius:12px; overflow:hidden; background:white; box-shadow:0 1px 4px rgba(0,0,0,0.06);';
+
+                card.innerHTML = `
+                  <!-- En-tête de la carte -->
+                  <div class="batch-card-header" onclick="toggleBatchCard(${idx})"
+                       style="display:flex; align-items:center; gap:0.75rem; padding:0.85rem 1rem; cursor:pointer; background:#fafafa; border-bottom:1px solid #e5e7eb; user-select:none;">
+                    <span class="batch-card-arrow" id="batch-arrow-${idx}" style="font-size:0.9rem; transition:transform 0.2s; transform:rotate(90deg);">▶</span>
+                    <span style="background:#6366f1; color:white; border-radius:999px; padding:0.2rem 0.6rem; font-size:0.8rem; font-weight:700; min-width:2rem; text-align:center;" id="batch-num-display-${idx}">Ch.</span>
+                    <input class="batch-chapitre-num" id="batch-num-${idx}" type="text" placeholder="ex: Chapitre 1"
+                           value=""
+                           oninput="updateBatchCardTitle(${idx})"
+                           onclick="event.stopPropagation()"
+                           style="flex:1; border:1px solid #d1d5db; border-radius:6px; padding:0.3rem 0.6rem; font-size:0.88rem; font-weight:600;">
+                    <span class="batch-status-badge" id="batch-status-${idx}"
+                          style="background:#e5e7eb; color:#6b7280; border-radius:999px; padding:0.25rem 0.75rem; font-size:0.78rem; font-weight:600; white-space:nowrap;">
+                        ⏳ En attente
+                    </span>
+                    <button onclick="event.stopPropagation(); removeBatchChapter(${idx})"
+                            style="background:#fee2e2; color:#ef4444; border:none; border-radius:6px; width:28px; height:28px; cursor:pointer; font-size:1rem; display:flex; align-items:center; justify-content:center; flex-shrink:0;">🗑</button>
+                  </div>
+
+                  <!-- Corps de la carte (dépliable) -->
+                  <div class="batch-card-body" id="batch-body-${idx}" style="padding:1rem; display:block;">
+
+                    <!-- Titre -->
+                    <div style="margin-bottom:1rem;">
+                        <label style="font-size:0.83rem; font-weight:600; color:#374151; display:block; margin-bottom:0.3rem;">Titre du chapitre</label>
+                        <input class="batch-titre" type="text" placeholder="ex: Les dérivées partielles"
+                               style="width:100%; padding:0.5rem 0.75rem; border:1px solid #d1d5db; border-radius:8px; font-size:0.9rem; box-sizing:border-box;">
+                    </div>
+
+                    <!-- COURS -->
+                    <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:1rem; margin-bottom:0.75rem;">
+                        <h5 style="margin:0 0 0.75rem; color:#15803d; font-size:0.9rem;">📚 COURS <span style="font-weight:400; color:#6b7280; font-size:0.78rem;">(texte et/ou fichier)</span></h5>
+                        <textarea class="batch-cours-texte" placeholder="Contenu textuel du cours…"
+                                  style="width:100%; min-height:80px; padding:0.5rem; border:1px solid #bbf7d0; border-radius:6px; font-size:0.85rem; resize:vertical; box-sizing:border-box;"></textarea>
+                        <div class="batch-cours-files" id="batch-cours-files-${idx}" style="margin-top:0.5rem;">
+                            <input type="file" name="cours_fichier" accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.odt,.odp" style="font-size:0.82rem;">
+                        </div>
+                        <button type="button" onclick="addBatchFileInput('batch-cours-files-${idx}', 'cours_fichier', '.pdf,.doc,.docx,.ppt,.pptx,.txt,.odt,.odp')"
+                                style="margin-top:0.4rem; background:white; border:1px dashed #86efac; color:#16a34a; border-radius:6px; padding:0.3rem 0.7rem; font-size:0.8rem; cursor:pointer;">+ Ajouter un fichier cours</button>
+                    </div>
+
+                    <!-- EXERCICES -->
+                    <div style="background:#fffbeb; border:1px solid #fde68a; border-radius:10px; padding:1rem; margin-bottom:0.75rem;">
+                        <h5 style="margin:0 0 0.75rem; color:#b45309; font-size:0.9rem;">✏️ EXERCICES <span style="font-weight:400; color:#6b7280; font-size:0.78rem;">(texte et/ou fichier)</span></h5>
+                        <textarea class="batch-exercice-texte" placeholder="Contenu des exercices…"
+                                  style="width:100%; min-height:80px; padding:0.5rem; border:1px solid #fde68a; border-radius:6px; font-size:0.85rem; resize:vertical; box-sizing:border-box;"></textarea>
+                        <div class="batch-exercice-files" id="batch-exercice-files-${idx}" style="margin-top:0.5rem;">
+                            <input type="file" name="exercice_fichier" accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,.odt,.ods" style="font-size:0.82rem;">
+                        </div>
+                        <button type="button" onclick="addBatchFileInput('batch-exercice-files-${idx}', 'exercice_fichier', '.pdf,.doc,.docx,.xls,.xlsx,.txt,.odt,.ods')"
+                                style="margin-top:0.4rem; background:white; border:1px dashed #fcd34d; color:#92400e; border-radius:6px; padding:0.3rem 0.7rem; font-size:0.8rem; cursor:pointer;">+ Ajouter un fichier exercices</button>
+                    </div>
+
+                    <!-- SOLUTIONS -->
+                    <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:10px; padding:1rem;">
+                        <h5 style="margin:0 0 0.75rem; color:#1d4ed8; font-size:0.9rem;">✅ SOLUTIONS <span style="font-weight:400; color:#6b7280; font-size:0.78rem;">(texte et/ou fichier)</span></h5>
+                        <textarea class="batch-solution-texte" placeholder="Contenu des solutions…"
+                                  style="width:100%; min-height:80px; padding:0.5rem; border:1px solid #bfdbfe; border-radius:6px; font-size:0.85rem; resize:vertical; box-sizing:border-box;"></textarea>
+                        <div class="batch-solution-files" id="batch-solution-files-${idx}" style="margin-top:0.5rem;">
+                            <input type="file" name="solution_fichier" accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,.odt,.ods" style="font-size:0.82rem;">
+                        </div>
+                        <button type="button" onclick="addBatchFileInput('batch-solution-files-${idx}', 'solution_fichier', '.pdf,.doc,.docx,.xls,.xlsx,.txt,.odt,.ods')"
+                                style="margin-top:0.4rem; background:white; border:1px dashed #93c5fd; color:#1e40af; border-radius:6px; padding:0.3rem 0.7rem; font-size:0.8rem; cursor:pointer;">+ Ajouter un fichier solutions</button>
+                    </div>
+
+                    <!-- Message d'erreur individuel -->
+                    <div class="batch-error-msg" id="batch-error-${idx}" style="display:none; margin-top:0.75rem; background:#fef2f2; color:#dc2626; border:1px solid #fecaca; border-radius:8px; padding:0.6rem 0.9rem; font-size:0.85rem;"></div>
+                  </div>
+                `;
+
+                list.appendChild(card);
+                updateBatchCount();
+                card.querySelector('.batch-chapitre-num').focus();
+            };
+
+            /* ── Supprimer une carte ── */
+            window.removeBatchChapter = function(idx) {
+                const card = document.querySelector(`.batch-chapter-card[data-idx="${idx}"]`);
+                if (card) { card.remove(); updateBatchCount(); }
+            };
+
+            /* ── Déplier / replier une carte ── */
+            window.toggleBatchCard = function(idx) {
+                const body  = document.getElementById(`batch-body-${idx}`);
+                const arrow = document.getElementById(`batch-arrow-${idx}`);
+                const open  = body.style.display !== 'none';
+                body.style.display  = open ? 'none' : 'block';
+                arrow.style.transform = open ? 'rotate(0deg)' : 'rotate(90deg)';
+            };
+
+            /* ── Mettre à jour le badge du numéro ── */
+            window.updateBatchCardTitle = function(idx) {
+                const val = document.getElementById(`batch-num-${idx}`)?.value?.trim();
+                const display = document.getElementById(`batch-num-display-${idx}`);
+                if (display) display.textContent = val || 'Ch.';
+            };
+
+            /* ── Ajouter un fichier supplémentaire dans une section ── */
+            window.addBatchFileInput = function(containerId, fieldName, accept) {
+                const container = document.getElementById(containerId);
+                if (!container) return;
+                const inp = document.createElement('input');
+                inp.type = 'file'; inp.name = fieldName; inp.accept = accept;
+                inp.style.cssText = 'font-size:0.82rem; display:block; margin-top:0.3rem;';
+                container.appendChild(inp);
+            };
+
+            /* ── Mettre à jour le compteur de chapitres ── */
+            function updateBatchCount() {
+                const n = document.querySelectorAll('.batch-chapter-card').length;
+                const cnt = document.getElementById('batch-chapter-count');
+                if (cnt) cnt.textContent = n === 0 ? '' : `${n} chapitre${n > 1 ? 's' : ''} dans la file`;
+            }
+
+            /* ── Changer le statut d'une carte ── */
+            function setBatchStatus(idx, state, msg) {
+                const badge = document.getElementById(`batch-status-${idx}`);
+                const errDiv = document.getElementById(`batch-error-${idx}`);
+                const card   = document.querySelector(`.batch-chapter-card[data-idx="${idx}"]`);
+                const configs = {
+                    pending:  { bg:'#e5e7eb', color:'#6b7280', text:'⏳ En attente',  border:'#e5e7eb' },
+                    loading:  { bg:'#dbeafe', color:'#1d4ed8', text:'⚙️ En cours…',   border:'#93c5fd' },
+                    success:  { bg:'#dcfce7', color:'#15803d', text:'✅ Créé !',       border:'#86efac' },
+                    error:    { bg:'#fee2e2', color:'#dc2626', text:'❌ Erreur',        border:'#fca5a5' },
+                };
+                const cfg = configs[state] || configs.pending;
+                if (badge) {
+                    badge.style.background = cfg.bg;
+                    badge.style.color      = cfg.color;
+                    badge.textContent      = cfg.text;
+                }
+                if (card) card.style.borderColor = cfg.border;
+                if (errDiv) {
+                    if (msg) { errDiv.textContent = msg; errDiv.style.display = 'block'; }
+                    else      { errDiv.style.display = 'none'; }
+                }
+            }
+
+            /* ── Soumettre tous les chapitres ── */
+            window.submitBatch = async function() {
+                /* Validation du contexte commun */
+                const uniId = document.getElementById('batch-universite')?.value;
+                const ufrId = document.getElementById('batch-ufr').value;
+                const filId = document.getElementById('batch-filiere').value;
+                const niv   = document.getElementById('batch-niveau').value;
+                const sem   = document.getElementById('batch-semestre').value;
+                const matId = document.getElementById('batch-matiere').value;
+
+                if (!ufrId || !filId || !niv || !sem || !matId) {
+                    alert('⚠️ Veuillez remplir tous les champs du contexte commun (UFR, filière, niveau, semestre, matière).');
+                    return;
+                }
+
+                const cards = [...document.querySelectorAll('.batch-chapter-card')];
+                if (cards.length === 0) {
+                    alert('⚠️ Ajoutez au moins un chapitre avant de créer.');
+                    return;
+                }
+
+                /* Bloquer les boutons pendant la création */
+                const addBtn    = document.getElementById('batch-add-btn');
+                const submitBtn = document.getElementById('batch-submit-btn');
+                addBtn.disabled    = true;
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '⚙️ Création en cours…';
+
+                /* Afficher la barre de progression */
+                const progressZone = document.getElementById('batch-progress-zone');
+                const progressBar  = document.getElementById('batch-progress-bar');
+                const progressLbl  = document.getElementById('batch-progress-label');
+                const progressStat = document.getElementById('batch-progress-stats');
+                progressZone.style.display = 'block';
+
+                let done = 0, succeeded = 0, failed = 0;
+                const total = cards.length;
+
+                /* Initialiser tous les statuts */
+                cards.forEach(c => setBatchStatus(c.dataset.idx, 'pending', null));
+
+                for (const card of cards) {
+                    const idx = card.dataset.idx;
+                    setBatchStatus(idx, 'loading', null);
+
+                    /* Replier les cartes précédentes déjà traitées pour ne voir que l'active */
+                    cards.forEach(c => {
+                        if (c.dataset.idx !== idx) {
+                            const b = document.getElementById(`batch-body-${c.dataset.idx}`);
+                            const a = document.getElementById(`batch-arrow-${c.dataset.idx}`);
+                            if (b) b.style.display = 'none';
+                            if (a) a.style.transform = 'rotate(0deg)';
+                        }
+                    });
+                    card.scrollIntoView({ behavior:'smooth', block:'nearest' });
+
+                    /* Construire le FormData */
+                    const fd = new FormData();
+                    if (uniId) fd.append('universite_id', uniId);
+                    fd.append('ufr_id',     ufrId);
+                    fd.append('filiere_id', filId);
+                    fd.append('matiere_id', matId);
+                    fd.append('niveau',     niv);
+                    fd.append('semestre',   sem);
+                    fd.append('chapitre',   card.querySelector('.batch-chapitre-num')?.value?.trim() || `Chapitre ${idx}`);
+                    fd.append('titre',      card.querySelector('.batch-titre')?.value?.trim() || '');
+                    fd.append('cours_texte',     card.querySelector('.batch-cours-texte')?.value     || '');
+                    fd.append('exercice_texte',  card.querySelector('.batch-exercice-texte')?.value  || '');
+                    fd.append('solution_texte',  card.querySelector('.batch-solution-texte')?.value  || '');
+
+                    /* Fichiers cours */
+                    card.querySelectorAll(`#batch-cours-files-${idx} input[type="file"]`).forEach((f, fi) => {
+                        if (f.files[0]) fd.append(`cours_fichier${fi > 0 ? '_' + fi : ''}`, f.files[0]);
+                    });
+                    /* Fichiers exercices */
+                    card.querySelectorAll(`#batch-exercice-files-${idx} input[type="file"]`).forEach((f, fi) => {
+                        if (f.files[0]) fd.append(`exercice_fichier${fi > 0 ? '_' + fi : ''}`, f.files[0]);
+                    });
+                    /* Fichiers solutions */
+                    card.querySelectorAll(`#batch-solution-files-${idx} input[type="file"]`).forEach((f, fi) => {
+                        if (f.files[0]) fd.append(`solution_fichier${fi > 0 ? '_' + fi : ''}`, f.files[0]);
+                    });
+
+                    /* Envoi AJAX */
+                    try {
+                        const resp = await fetch('/prof/chapitre-complet', {
+                            method: 'POST',
+                            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                            body: fd
+                        });
+                        const data = await resp.json();
+                        if (data.success) {
+                            setBatchStatus(idx, 'success', null);
+                            succeeded++;
+                        } else {
+                            setBatchStatus(idx, 'error', data.message || 'Erreur inconnue');
+                            failed++;
+                        }
+                    } catch (e) {
+                        setBatchStatus(idx, 'error', 'Erreur réseau — réessayez');
+                        failed++;
+                    }
+
+                    done++;
+                    const pct = Math.round((done / total) * 100);
+                    progressBar.style.width = pct + '%';
+                    progressLbl.textContent = `Progression — ${done} / ${total}`;
+                    progressStat.textContent = `✅ ${succeeded} réussi${succeeded > 1 ? 's' : ''} · ❌ ${failed} échoué${failed > 1 ? 's' : ''}`;
+                }
+
+                /* Fin de la soumission */
+                submitBtn.disabled = false;
+                if (failed === 0) {
+                    submitBtn.innerHTML = '🎉 Tous créés avec succès !';
+                    submitBtn.style.background = 'linear-gradient(135deg,#15803d,#16a34a)';
+                    progressBar.style.background = 'linear-gradient(90deg,#15803d,#22c55e)';
+                    progressLbl.textContent = `✅ ${succeeded} chapitre${succeeded > 1 ? 's' : ''} créé${succeeded > 1 ? 's' : ''} avec succès`;
+                    /* Retirer les cartes réussies après 2s */
+                    setTimeout(() => {
+                        document.querySelectorAll('.batch-chapter-card').forEach(c => {
+                            if (document.getElementById(`batch-status-${c.dataset.idx}`)?.textContent.includes('Créé')) {
+                                c.remove();
+                            }
+                        });
+                        updateBatchCount();
+                        if (document.querySelectorAll('.batch-chapter-card').length === 0) {
+                            closeBatchMode();
+                            location.reload();
+                        }
+                    }, 2000);
+                } else {
+                    submitBtn.innerHTML = `🚀 Recréer les ${failed} chapitre${failed > 1 ? 's' : ''} en erreur`;
+                    addBtn.disabled = false;
+                    /* Ne conserver dans la liste que les échecs */
+                    document.querySelectorAll('.batch-chapter-card').forEach(c => {
+                        const statusText = document.getElementById(`batch-status-${c.dataset.idx}`)?.textContent || '';
+                        if (statusText.includes('Créé')) c.remove();
+                    });
+                    updateBatchCount();
+                }
+            };
+
+            window.addBatchChapter   = window.addBatchChapter;
+            window.removeBatchChapter = window.removeBatchChapter;
+        })();
     </script>
 </body>
 </html>
