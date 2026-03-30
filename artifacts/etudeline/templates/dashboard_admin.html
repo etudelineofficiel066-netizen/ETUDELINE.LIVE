@@ -4724,207 +4724,333 @@
     <!-- ONGLET DOCUMENTS ÉTUDIANTS (ADMIN)                          -->
     <!-- ============================================================ -->
     <div id="content-documents-etudiants" class="tab-content" style="margin-top:1rem;">
-        <div style="background:white; border-radius:16px; box-shadow:0 4px 20px rgba(0,0,0,0.08); overflow:hidden;">
-            <!-- En-tête -->
-            <div style="background:linear-gradient(135deg,#6366f1,#4f46e5); padding:1.5rem; display:flex; justify-content:space-between; align-items:center;">
-                <div style="color:white;">
-                    <h3 style="margin:0; font-size:1.2rem;">📁 Documents Personnels des Étudiants</h3>
-                    <p style="margin:0.3rem 0 0; font-size:0.85rem; opacity:0.85;">Consultez et téléchargez les documents uploadés par les étudiants</p>
-                </div>
-                <div id="admin-docs-count" style="background:rgba(255,255,255,0.2); color:white; padding:0.4rem 0.9rem; border-radius:20px; font-size:0.85rem; font-weight:600;"></div>
-            </div>
 
-            <!-- Filtres -->
-            <div style="padding:1rem 1.5rem; border-bottom:1px solid #f1f5f9; display:flex; gap:0.75rem; flex-wrap:wrap; align-items:center;">
-                <span style="font-size:0.85rem; color:#64748b; font-weight:500;">Filtrer :</span>
-                <input type="text" id="admin-docs-search" placeholder="🔍 Nom, étudiant, matière..." oninput="filterAdminDocs()"
-                    style="padding:0.4rem 0.9rem; border:1.5px solid #e2e8f0; border-radius:20px; font-size:0.85rem; outline:none; width:220px;">
-                <select id="admin-docs-filiere" onchange="filterAdminDocs()" style="padding:0.4rem 0.8rem; border:1.5px solid #e2e8f0; border-radius:20px; font-size:0.8rem; outline:none; background:white;">
-                    <option value="">Toutes les filières</option>
-                    {% for fil in filieres %}
-                    <option value="{{ fil.id }}">{{ fil.nom }}</option>
-                    {% endfor %}
-                </select>
-                <select id="admin-docs-type" onchange="filterAdminDocs()" style="padding:0.4rem 0.8rem; border:1.5px solid #e2e8f0; border-radius:20px; font-size:0.8rem; outline:none; background:white;">
-                    <option value="">Tous les types</option>
-                    <option value="Devoir">📝 Devoir</option>
-                    <option value="Rapport">📋 Rapport</option>
-                    <option value="Carte étudiant">🪪 Carte étudiant</option>
-                    <option value="Attestation">📜 Attestation</option>
-                    <option value="Résumé">📑 Résumé</option>
-                    <option value="Exercice">✏️ Exercice</option>
-                    <option value="Autre">📦 Autre</option>
-                </select>
-                <button onclick="loadAdminDocuments()" style="padding:0.4rem 1rem; border:1.5px solid #6366f1; border-radius:20px; background:#6366f1; color:white; font-size:0.8rem; cursor:pointer; font-weight:600;">🔄 Actualiser</button>
-            </div>
+      <style>
+        .adoc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+        @media(max-width:1100px){.adoc-grid{grid-template-columns:repeat(2,1fr)}}
+        @media(max-width:600px){.adoc-grid{grid-template-columns:1fr}}
+        .adoc-filters{display:flex;gap:0.6rem;flex-wrap:wrap;align-items:stretch}
+        .adoc-fi{flex:1;min-width:140px}
+        .adoc-fi.s{flex:0.7;min-width:100px}
+        .adoc-fi.xl{flex:2;min-width:200px}
+        @media(max-width:640px){.adoc-fi,.adoc-fi.s,.adoc-fi.xl{flex:1 1 100%;min-width:0}}
+        .adoc-inp{width:100%;box-sizing:border-box;padding:0.52rem 0.9rem;border:1.5px solid #e2e8f0;border-radius:10px;font-size:0.82rem;outline:none;background:white;transition:border-color .15s}
+        .adoc-inp:focus{border-color:#6366f1;box-shadow:0 0 0 3px #6366f115}
+        .adoc-card{background:white;border-radius:16px;border:1.5px solid #f1f5f9;box-shadow:0 2px 10px rgba(0,0,0,0.05);display:flex;flex-direction:column;transition:transform .15s,box-shadow .15s,border-color .15s;overflow:hidden}
+        .adoc-card:hover{transform:translateY(-3px);box-shadow:0 10px 32px rgba(99,102,241,0.14);border-color:#c7d2fe}
+        .adoc-card-top{padding:1rem;display:flex;gap:0.75rem;align-items:flex-start}
+        .adoc-ico{width:50px;height:50px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0}
+        .adoc-card-info{flex:1;min-width:0}
+        .adoc-name{font-weight:700;color:#0f172a;font-size:0.88rem;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+        .adoc-fname{font-size:0.7rem;color:#94a3b8;margin-top:0.1rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+        .adoc-tags{display:flex;flex-wrap:wrap;gap:0.35rem;padding:0 1rem 0.6rem}
+        .adoc-tag{display:inline-flex;align-items:center;gap:0.2rem;padding:0.18rem 0.55rem;border-radius:20px;font-size:0.69rem;font-weight:700}
+        .adoc-stu{padding:0 1rem 0.75rem;display:flex;align-items:center;gap:0.55rem}
+        .adoc-av{width:30px;height:30px;background:linear-gradient(135deg,#6366f1,#7c3aed);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:0.72rem;font-weight:800;flex-shrink:0}
+        .adoc-sname{font-size:0.78rem;font-weight:700;color:#374151;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+        .adoc-sus{font-size:0.68rem;color:#94a3b8}
+        .adoc-foot{border-top:1.5px solid #f1f5f9;padding:0.6rem 1rem;display:flex;justify-content:space-between;align-items:center;gap:0.5rem;background:#fafbff}
+        .adoc-date{font-size:0.7rem;color:#94a3b8}
+        .adoc-acts{display:flex;gap:0.4rem;flex-shrink:0}
+        .adoc-btn{display:inline-flex;align-items:center;gap:0.25rem;padding:0.35rem 0.8rem;border-radius:8px;font-size:0.75rem;font-weight:700;cursor:pointer;text-decoration:none;border:none;transition:opacity .15s,transform .1s}
+        .adoc-btn:hover{opacity:0.85;transform:scale(1.03)}
+        /* Groupes */
+        .adoc-section{background:white;border-radius:18px;box-shadow:0 2px 16px rgba(0,0,0,0.06);margin-bottom:1.5rem;overflow:hidden;border:1.5px solid #e2e8f0}
+        .adoc-sect-head{padding:1.1rem 1.5rem;background:linear-gradient(135deg,#f8faff,#eef2ff);border-bottom:2px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none}
+        .adoc-sect-title{font-weight:800;color:#1e293b;font-size:0.98rem;display:flex;align-items:center;gap:0.5rem}
+        .adoc-sect-body{padding:1rem 1.5rem}
+        .adoc-fil-block{margin-bottom:1.25rem}
+        .adoc-fil-head{background:#f8fafc;border-radius:12px;padding:0.65rem 1rem;margin-bottom:0.75rem;display:flex;align-items:center;justify-content:space-between;cursor:pointer;border:1.5px solid #f1f5f9}
+        .adoc-fil-title{font-weight:700;color:#374151;font-size:0.87rem;display:flex;align-items:center;gap:0.4rem}
+        .adoc-niv-block{margin-bottom:1rem}
+        .adoc-niv-head{display:flex;align-items:center;gap:0.5rem;padding:0.45rem 0;margin-bottom:0.65rem;border-bottom:2px dashed #f1f5f9}
+        .adoc-sem-block{margin-bottom:0.85rem}
+        .adoc-sem-head{display:flex;align-items:center;gap:0.5rem;padding:0.35rem 0.8rem;background:#f0fdf4;border-radius:8px;margin-bottom:0.65rem;border-left:3px solid #10b981}
+        .adoc-pill{display:inline-flex;align-items:center;padding:0.22rem 0.65rem;border-radius:20px;font-size:0.73rem;font-weight:700}
+        .pill-univ{background:#eef2ff;color:#4338ca}
+        .pill-fil{background:#fdf4ff;color:#7e22ce}
+        .pill-niv{background:#eff6ff;color:#1d4ed8}
+        .pill-sem{background:#f0fdf4;color:#15803d}
+        .pill-cnt{background:#f1f5f9;color:#475569;font-size:0.68rem}
+        .adoc-toggle-arrow{transition:transform .25s;font-size:0.75rem;color:#94a3b8}
+        .adoc-collapsed .adoc-toggle-arrow{transform:rotate(-90deg)}
+        .adoc-collapsible{transition:max-height .3s ease;overflow:hidden}
+      </style>
 
-            <!-- Tableau -->
-            <div style="padding:1.5rem; overflow-x:auto;">
-                <div id="admin-docs-loading" style="text-align:center; padding:2.5rem; color:#94a3b8;">⏳ Chargement...</div>
-                <div id="admin-docs-empty" style="display:none; text-align:center; padding:3rem; color:#94a3b8;">📂 Aucun document trouvé.</div>
-                <table id="admin-docs-table" style="display:none; width:100%; border-collapse:collapse; font-size:0.88rem;">
-                    <thead>
-                        <tr style="background:#f8fafc; color:#64748b; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.04em;">
-                            <th style="padding:0.75rem 1rem; text-align:left; border-bottom:2px solid #e2e8f0;">Document</th>
-                            <th style="padding:0.75rem 1rem; text-align:left; border-bottom:2px solid #e2e8f0;">Étudiant</th>
-                            <th style="padding:0.75rem 1rem; text-align:left; border-bottom:2px solid #e2e8f0;">Filière / Matière</th>
-                            <th style="padding:0.75rem 1rem; text-align:left; border-bottom:2px solid #e2e8f0;">Type</th>
-                            <th style="padding:0.75rem 1rem; text-align:left; border-bottom:2px solid #e2e8f0;">Date</th>
-                            <th style="padding:0.75rem 1rem; text-align:left; border-bottom:2px solid #e2e8f0;">Taille</th>
-                            <th style="padding:0.75rem 1rem; text-align:center; border-bottom:2px solid #e2e8f0;">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="admin-docs-tbody"></tbody>
-                </table>
-            </div>
+      <!-- En-tête -->
+      <div style="background:linear-gradient(135deg,#4f46e5,#7c3aed);border-radius:20px;padding:1.5rem 2rem;margin-bottom:1.25rem;display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;align-items:center;">
+        <div style="color:white;">
+          <h3 style="margin:0;font-size:1.2rem;font-weight:800;letter-spacing:-0.01em;">📁 Documents Personnels des Étudiants</h3>
+          <p style="margin:0.3rem 0 0;font-size:0.83rem;opacity:0.85;">Classés par université · filière · niveau · semestre</p>
         </div>
-    </div>
-
-    <!-- Modal visionneuse admin -->
-    <div id="admin-viewer-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:10000; flex-direction:column;">
-        <div style="background:#1e293b; padding:0.75rem 1.25rem; display:flex; justify-content:space-between; align-items:center; flex-shrink:0;">
-            <span id="admin-viewer-title" style="color:white; font-weight:600; font-size:1rem;"></span>
-            <div style="display:flex; gap:0.75rem;">
-                <button id="admin-viewer-dl-btn" style="background:#6366f1; color:white; border:none; padding:0.5rem 1rem; border-radius:7px; font-size:0.85rem; cursor:pointer; font-weight:600;">⬇️ Télécharger</button>
-                <button onclick="closeAdminViewer()" style="background:#ef4444; color:white; border:none; padding:0.5rem 1rem; border-radius:7px; font-size:0.85rem; cursor:pointer; font-weight:600;">✕ Fermer</button>
-            </div>
+        <div style="display:flex;gap:0.65rem;flex-wrap:wrap;">
+          <span id="adoc-total" style="background:rgba(255,255,255,0.2);color:white;padding:0.3rem 0.9rem;border-radius:20px;font-size:0.82rem;font-weight:700;">–</span>
+          <span id="adoc-filtered" style="display:none;background:rgba(255,255,255,0.35);color:white;padding:0.3rem 0.9rem;border-radius:20px;font-size:0.82rem;font-weight:700;"></span>
         </div>
-        <div id="admin-viewer-content" style="flex:1; overflow:auto; display:flex; align-items:center; justify-content:center; padding:1rem;"></div>
+      </div>
+
+      <!-- Filtres -->
+      <div style="background:white;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,0.06);padding:1.25rem 1.5rem;margin-bottom:1.5rem;border:1.5px solid #f1f5f9;">
+        <div style="font-size:0.73rem;font-weight:700;color:#94a3b8;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:0.75rem;">Filtres</div>
+        <div class="adoc-filters">
+          <div class="adoc-fi xl">
+            <input class="adoc-inp" type="text" id="adoc-search" placeholder="🔍 Nom du document, étudiant, matière…" oninput="filterAdminDocs()">
+          </div>
+          <div class="adoc-fi">
+            <select class="adoc-inp" id="adoc-univ" onchange="filterAdminDocs()">
+              <option value="">🏛 Universités</option>
+            </select>
+          </div>
+          <div class="adoc-fi">
+            <select class="adoc-inp" id="adoc-filiere" onchange="filterAdminDocs()">
+              <option value="">📚 Filières</option>
+            </select>
+          </div>
+          <div class="adoc-fi s">
+            <select class="adoc-inp" id="adoc-niveau" onchange="filterAdminDocs()">
+              <option value="">🎓 Niveau</option>
+              <option>L1</option><option>L2</option><option>L3</option><option>M1</option><option>M2</option>
+            </select>
+          </div>
+          <div class="adoc-fi s">
+            <select class="adoc-inp" id="adoc-sem" onchange="filterAdminDocs()">
+              <option value="">📅 Sem.</option>
+              <option>S1</option><option>S2</option><option>S3</option><option>S4</option>
+            </select>
+          </div>
+          <div class="adoc-fi">
+            <select class="adoc-inp" id="adoc-type" onchange="filterAdminDocs()">
+              <option value="">📦 Tous types</option>
+              <option value="Devoir">📝 Devoir</option>
+              <option value="Rapport">📋 Rapport</option>
+              <option value="Carte étudiant">🪪 Carte étudiant</option>
+              <option value="Attestation">📜 Attestation</option>
+              <option value="Résumé">📑 Résumé</option>
+              <option value="Exercice">✏️ Exercice</option>
+              <option value="Autre">📦 Autre</option>
+            </select>
+          </div>
+          <div style="display:flex;gap:0.45rem;flex-shrink:0;align-items:stretch;">
+            <button onclick="resetAdminDocFilters()" style="padding:0.52rem 0.9rem;background:#f1f5f9;border:1.5px solid #e2e8f0;border-radius:10px;font-size:0.8rem;cursor:pointer;color:#64748b;font-weight:600;white-space:nowrap;">✕ Reset</button>
+            <button onclick="loadAdminDocuments()" style="padding:0.52rem 0.9rem;background:#6366f1;border:none;border-radius:10px;font-size:0.8rem;cursor:pointer;color:white;font-weight:700;white-space:nowrap;">🔄 Actualiser</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contenu -->
+      <div id="adoc-loading" style="text-align:center;padding:4rem 2rem;color:#94a3b8;">
+        <div style="font-size:2.5rem;margin-bottom:0.75rem;">⏳</div>
+        <p style="font-size:0.95rem;">Chargement des documents…</p>
+      </div>
+      <div id="adoc-empty" style="display:none;text-align:center;padding:4rem 2rem;background:white;border-radius:18px;box-shadow:0 2px 12px rgba(0,0,0,0.05);">
+        <div style="font-size:3rem;margin-bottom:0.75rem;">📂</div>
+        <p style="font-weight:700;color:#374151;font-size:1rem;margin:0 0 0.4rem;">Aucun document trouvé</p>
+        <p style="font-size:0.85rem;color:#94a3b8;margin:0;">Essayez de modifier les filtres</p>
+      </div>
+      <div id="adoc-content"></div>
     </div>
 
     <script>
-    // ── Admin Documents ────────────────────────────────────────────
+    // ── Admin Documents ─────────────────────────────────────────────
     let adminAllDocs = [];
+    const ADOC_ICONS = {'.pdf':'📄','.png':'🖼️','.jpg':'🖼️','.jpeg':'🖼️','.gif':'🖼️','.webp':'🖼️','.doc':'📝','.docx':'📝','.ppt':'📊','.pptx':'📊','.xls':'📈','.xlsx':'📈','.txt':'📃','.mp4':'🎬','.mp3':'🎵'};
+    const ADOC_COLORS = {'.pdf':'#ef4444','.png':'#f59e0b','.jpg':'#f59e0b','.jpeg':'#f59e0b','.gif':'#f59e0b','.webp':'#f59e0b','.doc':'#3b82f6','.docx':'#3b82f6','.ppt':'#f97316','.pptx':'#f97316','.xls':'#10b981','.xlsx':'#10b981','.txt':'#64748b','.mp4':'#8b5cf6','.mp3':'#ec4899'};
+    const TYPE_COLORS = {'Devoir':'#6366f1','Rapport':'#0ea5e9','Carte étudiant':'#f59e0b','Attestation':'#10b981','Résumé':'#8b5cf6','Exercice':'#f97316','Autre':'#64748b'};
+
+    function adocEsc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+    function adocFmtSize(b){if(!b)return'–';if(b<1024)return b+' o';if(b<1048576)return(b/1024).toFixed(1)+' Ko';return(b/1048576).toFixed(1)+' Mo';}
+    function adocFmtDate(iso){if(!iso)return'–';return new Date(iso).toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric'});}
 
     async function loadAdminDocuments() {
-        document.getElementById('admin-docs-loading').style.display = 'block';
-        document.getElementById('admin-docs-empty').style.display = 'none';
-        document.getElementById('admin-docs-table').style.display = 'none';
+        document.getElementById('adoc-loading').style.display = 'block';
+        document.getElementById('adoc-empty').style.display = 'none';
+        document.getElementById('adoc-content').innerHTML = '';
         try {
             const res = await fetch('/api/admin/documents-etudiants');
             const data = await res.json();
             adminAllDocs = data.documents || [];
-            const counter = document.getElementById('admin-docs-count');
-            if (counter) counter.textContent = `${adminAllDocs.length} document${adminAllDocs.length > 1 ? 's' : ''}`;
-            renderAdminDocs(adminAllDocs);
+            _populateAdocSelects(adminAllDocs);
+            document.getElementById('adoc-total').textContent = `${adminAllDocs.length} doc${adminAllDocs.length>1?'s':''}`;
+            filterAdminDocs();
         } catch(e) {
-            document.getElementById('admin-docs-loading').textContent = '❌ Erreur de chargement.';
+            document.getElementById('adoc-loading').innerHTML = '<p style="color:#ef4444;font-weight:600;">❌ Erreur de chargement</p>';
         }
+    }
+
+    function _populateAdocSelects(docs) {
+        const univs = new Map(), fils = new Map();
+        docs.forEach(d => {
+            if(d.universite_id && d.universite_nom) univs.set(d.universite_id, d.universite_nom);
+            if(d.filiere_id && d.filiere_nom) fils.set(d.filiere_id, d.filiere_nom);
+        });
+        const uSel = document.getElementById('adoc-univ');
+        const uCur = uSel.value;
+        uSel.innerHTML = '<option value="">🏛 Universités</option>' +
+            [...univs.entries()].sort((a,b)=>a[1].localeCompare(b[1])).map(([id,n])=>`<option value="${adocEsc(id)}">${adocEsc(n)}</option>`).join('');
+        if(uCur) uSel.value = uCur;
+        const fSel = document.getElementById('adoc-filiere');
+        const fCur = fSel.value;
+        fSel.innerHTML = '<option value="">📚 Filières</option>' +
+            [...fils.entries()].sort((a,b)=>a[1].localeCompare(b[1])).map(([id,n])=>`<option value="${adocEsc(id)}">${adocEsc(n)}</option>`).join('');
+        if(fCur) fSel.value = fCur;
     }
 
     function filterAdminDocs() {
-        const search = (document.getElementById('admin-docs-search').value || '').toLowerCase().trim();
-        const filiere = document.getElementById('admin-docs-filiere').value;
-        const type = document.getElementById('admin-docs-type').value;
-
-        const filtered = adminAllDocs.filter(doc => {
-            const matchSearch = !search || (doc.nom_affichage||'').toLowerCase().includes(search) || (doc.etudiant_nom||'').toLowerCase().includes(search) || (doc.matiere_nom||'').toLowerCase().includes(search) || (doc.etudiant_username||'').toLowerCase().includes(search);
-            const matchFiliere = !filiere || doc.filiere_id === filiere;
-            const matchType = !type || doc.type_document === type;
-            return matchSearch && matchFiliere && matchType;
+        const q = (document.getElementById('adoc-search').value||'').toLowerCase().trim();
+        const univ = document.getElementById('adoc-univ').value;
+        const fil = document.getElementById('adoc-filiere').value;
+        const niv = document.getElementById('adoc-niveau').value;
+        const sem = document.getElementById('adoc-sem').value;
+        const typ = document.getElementById('adoc-type').value;
+        const filtered = adminAllDocs.filter(d => {
+            if(q && ![(d.nom_affichage||''),(d.etudiant_nom||''),(d.matiere_nom||''),(d.etudiant_username||'')].join(' ').toLowerCase().includes(q)) return false;
+            if(univ && d.universite_id !== univ) return false;
+            if(fil && d.filiere_id !== fil) return false;
+            if(niv && d.niveau !== niv) return false;
+            if(sem && d.semestre !== sem) return false;
+            if(typ && d.type_document !== typ) return false;
+            return true;
         });
-        renderAdminDocs(filtered);
+        const fEl = document.getElementById('adoc-filtered');
+        if(filtered.length < adminAllDocs.length) {
+            fEl.style.display=''; fEl.textContent=`${filtered.length} affiché${filtered.length>1?'s':''}`;
+        } else { fEl.style.display='none'; }
+        _renderAdminDocs(filtered);
     }
 
-    function renderAdminDocs(docs) {
-        document.getElementById('admin-docs-loading').style.display = 'none';
-        const table = document.getElementById('admin-docs-table');
-        const empty = document.getElementById('admin-docs-empty');
-        if (docs.length === 0) {
-            table.style.display = 'none';
-            empty.style.display = 'block';
-            return;
-        }
-        empty.style.display = 'none';
-        table.style.display = 'table';
+    function resetAdminDocFilters() {
+        ['adoc-search','adoc-univ','adoc-filiere','adoc-niveau','adoc-sem','adoc-type'].forEach(id => {
+            const el = document.getElementById(id); if(el) el.value='';
+        });
+        filterAdminDocs();
+    }
 
-        const FILE_ICONS = { '.pdf': '📄', '.png': '🖼️', '.jpg': '🖼️', '.jpeg': '🖼️', '.gif': '🖼️', '.webp': '🖼️', '.doc': '📝', '.docx': '📝', '.ppt': '📊', '.pptx': '📊', '.xls': '📈', '.xlsx': '📈', '.txt': '📃', '.mp4': '🎬', '.mp3': '🎵' };
-        const PREVIEW_EXTS = ['.pdf', '.png', '.jpg', '.jpeg', '.gif', '.webp', '.mp4', '.mp3', '.txt'];
+    function _renderAdminDocs(docs) {
+        document.getElementById('adoc-loading').style.display = 'none';
+        const content = document.getElementById('adoc-content');
+        if(!docs.length) { document.getElementById('adoc-empty').style.display='block'; content.innerHTML=''; return; }
+        document.getElementById('adoc-empty').style.display = 'none';
 
-        function fmtSize(b) {
-            if (!b) return '–';
-            if (b < 1024) return b + ' o';
-            if (b < 1024*1024) return (b/1024).toFixed(1) + ' Ko';
-            return (b/(1024*1024)).toFixed(1) + ' Mo';
-        }
-        function fmtDate(iso) {
-            if (!iso) return '–';
-            return new Date(iso).toLocaleDateString('fr-FR', {day:'2-digit', month:'short', year:'numeric'});
-        }
-        function esc(s) {
-            if (!s) return '';
-            return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-        }
+        // Grouper : université > filière > niveau > semestre
+        const tree = new Map();
+        docs.forEach(d => {
+            const u = d.universite_nom || '—';
+            const f = d.filiere_nom   || '—';
+            const n = d.niveau        || '—';
+            const s = d.semestre      || '—';
+            if(!tree.has(u)) tree.set(u, new Map());
+            const tf = tree.get(u);
+            if(!tf.has(f)) tf.set(f, new Map());
+            const tn = tf.get(f);
+            if(!tn.has(n)) tn.set(n, new Map());
+            const ts = tn.get(n);
+            if(!ts.has(s)) ts.set(s, []);
+            ts.get(s).push(d);
+        });
 
-        const tbody = document.getElementById('admin-docs-tbody');
-        tbody.innerHTML = docs.map((doc, i) => {
-            const icon = FILE_ICONS[doc.extension] || '📦';
-            const canPreview = PREVIEW_EXTS.includes(doc.extension);
-            const bg = i % 2 === 0 ? 'white' : '#f8fafc';
-            return `<tr style="background:${bg}; border-bottom:1px solid #f1f5f9;">
-                <td style="padding:0.75rem 1rem;">
-                    <div style="display:flex; align-items:center; gap:0.5rem;">
-                        <span style="font-size:1.3rem;">${icon}</span>
-                        <span style="font-weight:600; color:#1e293b; max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${esc(doc.nom_affichage)}">${esc(doc.nom_affichage)}</span>
+        let html = '';
+        tree.forEach((tFil, uNom) => {
+            const uCnt = [...tFil.values()].reduce((a,mn)=>[...mn.values()].reduce((b,ms)=>b+[...ms.values()].reduce((c,arr)=>c+arr.length,0),a),0);
+            html += `<div class="adoc-section">
+              <div class="adoc-sect-head" onclick="adocToggle(this)">
+                <div class="adoc-sect-title"><span class="adoc-pill pill-univ">🏛 ${adocEsc(uNom)}</span></div>
+                <div style="display:flex;align-items:center;gap:0.5rem;">
+                  <span class="adoc-pill pill-cnt">${uCnt} doc${uCnt>1?'s':''}</span>
+                  <span class="adoc-toggle-arrow">▼</span>
+                </div>
+              </div>
+              <div class="adoc-collapsible adoc-sect-body">`;
+
+            tFil.forEach((tNiv, fNom) => {
+                const fCnt = [...tNiv.values()].reduce((a,ms)=>a+[...ms.values()].reduce((b,arr)=>b+arr.length,0),0);
+                html += `<div class="adoc-fil-block">
+                  <div class="adoc-fil-head" onclick="adocToggle(this)">
+                    <div class="adoc-fil-title"><span class="adoc-pill pill-fil">📚 ${adocEsc(fNom)}</span></div>
+                    <div style="display:flex;align-items:center;gap:0.5rem;">
+                      <span class="adoc-pill pill-cnt">${fCnt}</span>
+                      <span class="adoc-toggle-arrow">▼</span>
                     </div>
-                    <div style="color:#94a3b8; font-size:0.72rem; margin-top:0.1rem;">${esc(doc.fichier_nom)}</div>
-                </td>
-                <td style="padding:0.75rem 1rem;">
-                    <div style="font-weight:600; color:#374151;">${esc(doc.etudiant_nom)}</div>
-                    <div style="color:#94a3b8; font-size:0.75rem;">@${esc(doc.etudiant_username)}</div>
-                    ${doc.filiere_nom ? `<div style="color:#64748b; font-size:0.75rem;">📚 ${esc(doc.filiere_nom)}</div>` : ''}
-                </td>
-                <td style="padding:0.75rem 1rem; color:#64748b; font-size:0.82rem;">
-                    ${doc.filiere_nom ? `<div>${esc(doc.filiere_nom)}</div>` : ''}
-                    ${doc.matiere_nom ? `<div style="color:#4f46e5;">📖 ${esc(doc.matiere_nom)}</div>` : '<span style="color:#cbd5e1;">–</span>'}
-                </td>
-                <td style="padding:0.75rem 1rem;">
-                    ${doc.type_document ? `<span style="background:#6366f120; color:#4f46e5; font-size:0.75rem; padding:0.2rem 0.6rem; border-radius:20px; font-weight:600;">${esc(doc.type_document)}</span>` : '<span style="color:#cbd5e1; font-size:0.8rem;">–</span>'}
-                </td>
-                <td style="padding:0.75rem 1rem; color:#64748b; font-size:0.82rem;">${fmtDate(doc.created_at)}</td>
-                <td style="padding:0.75rem 1rem; color:#64748b; font-size:0.82rem;">${fmtSize(doc.taille)}</td>
-                <td style="padding:0.75rem 1rem; text-align:center;">
-                    <div style="display:flex; gap:0.4rem; justify-content:center;">
-                        ${canPreview ? `<button onclick="openAdminViewer(${doc.id},'${esc(doc.nom_affichage).replace(/'/g,"\\'")}','${doc.extension}')" title="Visualiser" style="background:#6366f1; color:white; border:none; padding:0.4rem 0.7rem; border-radius:6px; font-size:0.8rem; cursor:pointer; font-weight:600;">👁️</button>` : ''}
-                        <a href="/admin/document/${doc.id}/download" title="Télécharger" style="background:#10b981; color:white; border:none; padding:0.4rem 0.7rem; border-radius:6px; font-size:0.8rem; cursor:pointer; font-weight:600; text-decoration:none; display:inline-flex; align-items:center;">⬇️</a>
-                    </div>
-                </td>
-            </tr>`;
-        }).join('');
+                  </div>
+                  <div class="adoc-collapsible" style="padding-left:0.25rem;">`;
+
+                tNiv.forEach((tSem, niv) => {
+                    const nCnt = [...tSem.values()].reduce((a,arr)=>a+arr.length,0);
+                    html += `<div class="adoc-niv-block">
+                      <div class="adoc-niv-head">
+                        <span class="adoc-pill pill-niv">🎓 ${adocEsc(niv)}</span>
+                        <span class="adoc-pill pill-cnt">${nCnt} doc${nCnt>1?'s':''}</span>
+                      </div>`;
+
+                    tSem.forEach((arr, sem) => {
+                        html += `<div class="adoc-sem-block">
+                          <div class="adoc-sem-head">
+                            <span class="adoc-pill pill-sem">📅 ${adocEsc(sem)}</span>
+                            <span style="font-size:0.7rem;color:#64748b;font-weight:600;margin-left:auto;">${arr.length} fichier${arr.length>1?'s':''}</span>
+                          </div>
+                          <div class="adoc-grid">`;
+                        arr.forEach(doc => { html += _buildAdocCard(doc); });
+                        html += `</div></div>`;
+                    });
+                    html += `</div>`;
+                });
+                html += `</div></div>`;
+            });
+            html += `</div></div>`;
+        });
+        content.innerHTML = html;
     }
 
-    function openAdminViewer(docId, nom, ext) {
-        const modal = document.getElementById('admin-viewer-modal');
-        const content = document.getElementById('admin-viewer-content');
-        document.getElementById('admin-viewer-title').textContent = nom;
-        document.getElementById('admin-viewer-dl-btn').onclick = () => { window.location.href = `/admin/document/${docId}/download`; };
-        modal.style.display = 'flex';
-        content.innerHTML = '<div style="color:#94a3b8;">⏳ Chargement...</div>';
+    function _buildAdocCard(doc) {
+        const ext   = doc.extension || '';
+        const icon  = ADOC_ICONS[ext]  || '📦';
+        const color = ADOC_COLORS[ext] || '#6366f1';
+        const tColor= TYPE_COLORS[doc.type_document] || '#64748b';
+        const init  = (doc.etudiant_nom||'?').split(' ').map(w=>w[0]||'').slice(0,2).join('').toUpperCase();
+        const lUrl  = `/admin/document/${doc.id}/lecteur`;
+        const dUrl  = `/admin/document/${doc.id}/download`;
+        return `<div class="adoc-card">
+          <div class="adoc-card-top">
+            <a href="${lUrl}" title="Ouvrir" style="text-decoration:none;flex-shrink:0;">
+              <div class="adoc-ico" style="background:${color}18;">${icon}</div>
+            </a>
+            <div class="adoc-card-info">
+              <div class="adoc-name" title="${adocEsc(doc.nom_affichage)}">${adocEsc(doc.nom_affichage)}</div>
+              <div class="adoc-fname">${adocEsc(doc.fichier_nom||'')}${doc.taille?' · '+adocFmtSize(doc.taille):''}</div>
+            </div>
+          </div>
+          <div class="adoc-tags">
+            ${doc.type_document?`<span class="adoc-tag" style="background:${tColor}18;color:${tColor};">${adocEsc(doc.type_document)}</span>`:''}
+            ${doc.matiere_nom?`<span class="adoc-tag" style="background:#6366f110;color:#4f46e5;">📖 ${adocEsc(doc.matiere_nom)}</span>`:''}
+          </div>
+          <div class="adoc-stu">
+            <div class="adoc-av">${adocEsc(init)}</div>
+            <div style="min-width:0;">
+              <div class="adoc-sname">${adocEsc(doc.etudiant_nom)}</div>
+              <div class="adoc-sus">@${adocEsc(doc.etudiant_username)}</div>
+            </div>
+          </div>
+          <div class="adoc-foot">
+            <span class="adoc-date">${adocFmtDate(doc.created_at)}</span>
+            <div class="adoc-acts">
+              <a href="${lUrl}" class="adoc-btn" style="background:#6366f1;color:white;">👁 Ouvrir</a>
+              <a href="${dUrl}" class="adoc-btn" style="background:#10b981;color:white;">⬇</a>
+            </div>
+          </div>
+        </div>`;
+    }
 
-        const url = `/admin/document/${docId}/view`;
-        const imgExts = ['.png', '.jpg', '.jpeg', '.gif', '.webp'];
-
-        if (ext === '.pdf') {
-            content.innerHTML = `<iframe src="${url}" style="width:100%; height:100%; min-height:80vh; border:none; border-radius:8px;"></iframe>`;
-        } else if (imgExts.includes(ext)) {
-            content.innerHTML = `<img src="${url}" style="max-width:100%; max-height:85vh; border-radius:10px; box-shadow:0 8px 32px rgba(0,0,0,0.4);" alt="${nom}">`;
-        } else if (ext === '.mp4') {
-            content.innerHTML = `<video controls autoplay style="max-width:100%; max-height:80vh; border-radius:10px;"><source src="${url}"></video>`;
-        } else if (ext === '.mp3') {
-            content.innerHTML = `<div style="text-align:center; padding:2rem;"><div style="font-size:4rem; margin-bottom:1rem;">🎵</div><p style="color:white; margin-bottom:1rem; font-size:1.1rem;">${nom}</p><audio controls autoplay style="width:100%; max-width:500px;"><source src="${url}"></audio></div>`;
-        } else if (ext === '.txt') {
-            fetch(url).then(r => r.text()).then(txt => {
-                content.innerHTML = `<div style="background:white; border-radius:10px; padding:2rem; max-width:800px; width:100%; max-height:80vh; overflow:auto; white-space:pre-wrap; font-family:monospace; font-size:0.9rem; color:#1e293b;">${txt.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>`;
-            }).catch(() => { content.innerHTML = '<p style="color:white;">❌ Impossible d\'afficher.</p>'; });
+    function adocToggle(header) {
+        const body = header.nextElementSibling;
+        if(!body) return;
+        const isOpen = body.style.maxHeight && body.style.maxHeight !== '0px';
+        if(isOpen) {
+            body.style.maxHeight = '0px';
+            header.classList.add('adoc-collapsed');
+        } else {
+            body.style.maxHeight = body.scrollHeight + 5000 + 'px';
+            header.classList.remove('adoc-collapsed');
         }
     }
-
-    function closeAdminViewer() {
-        document.getElementById('admin-viewer-modal').style.display = 'none';
-        document.getElementById('admin-viewer-content').innerHTML = '';
-    }
-
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeAdminViewer(); });
     </script>
 
     <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e9ecef; color: #666; font-size: 0.9rem;">
